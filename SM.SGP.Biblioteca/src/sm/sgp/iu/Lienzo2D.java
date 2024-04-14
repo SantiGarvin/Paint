@@ -3,26 +3,28 @@ package sm.sgp.iu;
 import sm.sgp.graficos.MiRectangulo;
 import sm.sgp.graficos.MiElipse;
 import sm.sgp.graficos.MiLinea;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.List;
 import java.util.ArrayList;
+import sm.sgp.graficos.*;
 
+/**
+ * Clase que representa un lienzo 2D donde se pueden dibujar diferentes figuras.
+ */
 public class Lienzo2D extends javax.swing.JPanel {
 
     public enum Herramienta {
         LINEA,
         RECTANGULO,
-        ELIPSE
+        ELIPSE,
+        FANTASMA
     }
 
     private Color color = Color.black;
@@ -30,24 +32,29 @@ public class Lienzo2D extends javax.swing.JPanel {
     private boolean relleno = false;
     private boolean mover = false;
 
-    private Point posicionPressed = new Point(0, 0);
-    private Point posicionDragged = new Point(0, 0);
+    private Point2D posicionPressed = new Point(0, 0);
+    private Point2D posicionDragged = new Point(0, 0);
 
-    private Shape forma = new Line2D.Float();
+    private Shape figura = new Line2D.Float();
     private List<Shape> vShape = new ArrayList<>();
 
-    private Stroke trazo = new BasicStroke();
+    private Stroke grosor = new BasicStroke();
 
-    private Composite transparencia = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
     private boolean transparenciaActiva = false;
-
-    private RenderingHints alisado = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     private boolean alisadoActivo = false;
 
+    /**
+     * Constructor de la clase Lienzo2D.
+     */
     public Lienzo2D() {
         initComponents();
     }
 
+    /**
+     * Método que se encarga de pintar el lienzo y las figuras en él.
+     *
+     * @param g El objeto Graphics utilizado para pintar.
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -56,28 +63,9 @@ public class Lienzo2D extends javax.swing.JPanel {
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHints(alisado);
-        g2d.setComposite(transparencia);
-        g2d.setStroke(trazo);
-        g2d.setPaint(color);
-        if (transparenciaActiva) {
-            transparencia = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-        } else {
-            transparencia = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-        }
-
-        if (alisadoActivo) {
-            alisado = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        } else {
-            alisado = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        }
 
         for (Shape s : vShape) {
-            if (relleno) {
-                g2d.fill(s);
-            }
-
-            g2d.draw(s);
+            ((AbstractShape) s).draw(g2d);
         }
     }
 
@@ -99,6 +87,9 @@ public class Lienzo2D extends javax.swing.JPanel {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                formMouseReleased(evt);
+            }
         });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -113,121 +104,234 @@ public class Lienzo2D extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Verifica si la funcionalidad de mover está activa.
+     *
+     * @return true si la funcionalidad de mover está activa, false de lo
+     * contrario.
+     */
     public boolean isMoverActivo() {
         return mover;
     }
 
+    /**
+     * Establece el estado de la funcionalidad de mover.
+     *
+     * @param mover true para activar la funcionalidad de mover, false
+     * para desactivarla.
+     */
     public void setMoverActivo(boolean mover) {
         this.mover = mover;
     }
 
+    /**
+     * Obtiene el color actual del lienzo.
+     *
+     * @return El color actual del lienzo.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Establece el color del lienzo.
+     *
+     * @param color El color a establecer.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * Verifica si la funcionalidad de relleno está activa.
+     *
+     * @return true si la funcionalidad de relleno está activa, false de lo
+     * contrario.
+     */
     public boolean isRellenoActivo() {
         return relleno;
     }
 
+    /**
+     * Establece el estado de la funcionalidad de relleno.
+     *
+     * @param relleno true para activar la funcionalidad de relleno, false para
+     * desactivarla.
+     */
     public void setRellenoActivo(boolean relleno) {
         this.relleno = relleno;
     }
 
+    /**
+     * Obtiene la herramienta de dibujo actual.
+     *
+     * @return La herramienta de dibujo actual.
+     */
     public Herramienta getHerramienta() {
         return herramienta;
     }
 
+    /**
+     * Establece la herramienta de dibujo.
+     *
+     * @param herramienta La herramienta de dibujo a establecer.
+     */
     public void setHerramienta(Herramienta herramienta) {
         this.herramienta = herramienta;
     }
 
+    /**
+     * Borra todas las figuras del lienzo.
+     */
     public void borrar() {
         this.vShape.clear();
         this.repaint();
     }
 
+    /**
+     * Establece el grosor del trazo.
+     *
+     * @param grosor El grosor del trazo a establecer.
+     */
     public void setGrosor(int grosor) {
-        this.trazo = new BasicStroke(grosor);
+        this.grosor = new BasicStroke(grosor);
         this.repaint();
     }
 
+    /**
+     * Obtiene el grosor del trazo actual.
+     *
+     * @return El grosor del trazo actual.
+     */
     public Stroke getGrosor() {
-        return trazo;
+        return grosor;
     }
 
-    public void setTransparenciaActiva(boolean transparenciaActiva) {
-        this.transparenciaActiva = transparenciaActiva;
+    /**
+     * Establece el estado de la transparencia.
+     *
+     * @param t true para activar la transparencia, false para desactivarla.
+     */
+    public void setTransparenciaActiva(boolean t) {
+        this.transparenciaActiva = t;
     }
 
+    /**
+     * Verifica si la transparencia está activa.
+     *
+     * @return true si la transparencia está activa, false de lo contrario.
+     */
     public boolean isTransparenciaActiva() {
         return transparenciaActiva;
     }
 
-    public void setAlisadoActivo(boolean alisadoActivo) {
-        this.alisadoActivo = alisadoActivo;
+    /**
+     * Establece el estado del alisado.
+     *
+     * @param a true para activar el alisado, false para desactivarlo.
+     */
+    public void setAlisadoActivo(boolean a) {
+        this.alisadoActivo = a;
     }
 
+    /**
+     * Verifica si el alisado está activo.
+     *
+     * @return true si el alisado está activo, false de lo contrario.
+     */
     public boolean isAlisadoActivo() {
         return alisadoActivo;
     }
 
+    /**
+     * Método que busca la figura seleccionada en una posición dada.
+     *
+     * @param p La posición donde se busca la figura seleccionada.
+     * @return La figura seleccionada, o null si no se encontró ninguna.
+     */
+    private Shape figuraSeleccionada(Point2D p) {
+        for (int i = vShape.size() - 1; i >= 0; i--) {
+            Shape s = vShape.get(i);
+            if (s.contains(p)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Método que se ejecuta cuando se presiona el botón del mouse en el lienzo.
+     *
+     * @param evt El evento del mouse.
+     */
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         this.posicionPressed = evt.getPoint();
 
         if (mover) {
-            forma = figuraSeleccionada(evt.getPoint());
+            figura = figuraSeleccionada(evt.getPoint());
         } else {
-            Shape formaAux = null;
+            Shape figuraAux = null;
             switch (herramienta) {
                 case LINEA:
-                    formaAux = new MiLinea(posicionPressed, posicionPressed);
+                    figuraAux = new MiLinea(posicionPressed, posicionPressed);
                     break;
                 case RECTANGULO:
-                    formaAux = new MiRectangulo();
-                    ((MiRectangulo) formaAux).setFrameFromDiagonal(posicionPressed, posicionPressed);
+                    figuraAux = new MiRectangulo(posicionPressed, posicionPressed);
                     break;
                 case ELIPSE:
-                    formaAux = new MiElipse();
-                    ((MiElipse) formaAux).setFrameFromDiagonal(posicionPressed, posicionPressed);
+                    figuraAux = new MiElipse(posicionPressed, posicionPressed);
+                    break;
+                case FANTASMA:
+                    figuraAux = new MiFantasma(posicionPressed);
                     break;
             }
 
-            if (formaAux != null) {
-                this.forma = formaAux;
-                this.vShape.add(forma);
+            if (figuraAux != null) {
+                ((AbstractShape) figuraAux).setColor(color);
+                ((AbstractShape) figuraAux).setGrosor(grosor);
+                ((AbstractShape) figuraAux).setTransparenciaActiva(transparenciaActiva);
+                ((AbstractShape) figuraAux).setAlisadoActivo(alisadoActivo);
+                if (figuraAux instanceof AbstractShapeFilled) {
+                    ((AbstractShapeFilled) figuraAux).setRelleno(relleno);
+                }
+                this.figura = figuraAux;
+                this.vShape.add(figura);
             }
         }
     }//GEN-LAST:event_formMousePressed
 
+    /**
+     * Método que se ejecuta cuando se arrastra el mouse en el lienzo.
+     *
+     * @param evt El evento del mouse.
+     */
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         this.posicionDragged = evt.getPoint();
 
         if (mover) {
-            if (forma != null) {
-                if (forma instanceof MiLinea) {
-                    ((MiLinea) forma).setLocation(posicionDragged);
-                } else if (forma instanceof MiRectangulo) {
-                    ((MiRectangulo) forma).setLocation(posicionDragged);
-                } else if (forma instanceof MiElipse) {
-                    ((MiElipse) forma).setLocation(posicionDragged);
+            if (figura != null) {
+                if (figura instanceof MiLinea) {
+                    ((MiLinea) figura).setLocation(posicionDragged);
+                } else if (figura instanceof MiRectangulo) {
+                    ((MiRectangulo) figura).setLocation(posicionDragged);
+                } else if (figura instanceof MiElipse) {
+                    ((MiElipse) figura).setLocation(posicionDragged);
+                } else if (figura instanceof MiFantasma) {
+                    ((MiFantasma) figura).setLocation(posicionDragged);
                 }
             }
         } else {
 
-            if (forma != null) {
+            if (figura != null) {
                 switch (herramienta) {
                     case LINEA:
-                        ((MiLinea) forma).setLine(posicionPressed, posicionDragged);
+                        ((MiLinea) figura).setLine(posicionPressed, posicionDragged);
                         break;
                     case RECTANGULO:
-                        ((MiRectangulo) forma).setFrameFromDiagonal(posicionPressed, posicionDragged);
+                        ((MiRectangulo) figura).setFrameFromDiagonal(posicionPressed, posicionDragged);
                         break;
                     case ELIPSE:
-                        ((MiElipse) forma).setFrameFromDiagonal(posicionPressed, posicionDragged);
+                        ((MiElipse) figura).setFrameFromDiagonal(posicionPressed, posicionDragged);
                         break;
                 }
             }
@@ -235,14 +339,15 @@ public class Lienzo2D extends javax.swing.JPanel {
         this.repaint();
     }//GEN-LAST:event_formMouseDragged
 
-    private Shape figuraSeleccionada(Point2D p) {
-        for (Shape s : vShape) {
-            if (s.contains(p)) {
-                return s;
-            }
-        }
-        return null;
-    }
+    /**
+     * Método que se ejecuta cuando se suelta el botón del mouse en el lienzo.
+     *
+     * @param evt El evento del mouse.
+     */
+    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        this.figura = null;
+        this.repaint();
+    }//GEN-LAST:event_formMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
