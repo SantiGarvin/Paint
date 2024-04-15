@@ -35,8 +35,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         sliderGrosor = new javax.swing.JSlider();
         lienzo = new sm.sgp.iu.Lienzo2D();
         panelBarraEstado = new javax.swing.JPanel();
-        barrraEstado = new javax.swing.JTextField();
-        barMenu = new javax.swing.JMenuBar();
+        barraEstado = new javax.swing.JTextField();
+        barraMenu = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
         menuItemNuevo = new javax.swing.JMenuItem();
         menuItemAbrir = new javax.swing.JMenuItem();
@@ -52,8 +52,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         barHerramientas.setRollover(true);
         barHerramientas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                barHerramientasMouseEntered(evt);
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                barHerramientasMouseExited(evt);
             }
         });
 
@@ -255,10 +255,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         panelBarraEstado.setLayout(new java.awt.BorderLayout());
 
-        barrraEstado.setEditable(false);
-        barrraEstado.setEnabled(false);
-        barrraEstado.setFocusable(false);
-        panelBarraEstado.add(barrraEstado, java.awt.BorderLayout.CENTER);
+        barraEstado.setEditable(false);
+        barraEstado.setEnabled(false);
+        barraEstado.setFocusable(false);
+        panelBarraEstado.add(barraEstado, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(panelBarraEstado, java.awt.BorderLayout.PAGE_END);
 
@@ -288,23 +288,29 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         menuArchivo.add(menuItemGuardar);
 
-        barMenu.add(menuArchivo);
+        barraMenu.add(menuArchivo);
 
-        setJMenuBar(barMenu);
+        setJMenuBar(barraMenu);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void toggleButtonLineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonLineaActionPerformed
         this.lienzo.setHerramienta(Lienzo2D.Herramienta.LINEA);
+        if (this.toggleButtonLinea.isSelected())
+            this.barraEstado.setText("LINEA seleccionada");
     }//GEN-LAST:event_toggleButtonLineaActionPerformed
 
     private void toggleButtonCuadradoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonCuadradoActionPerformed
         this.lienzo.setHerramienta(Lienzo2D.Herramienta.RECTANGULO);
+        if (this.toggleButtonCuadrado.isSelected())
+            this.barraEstado.setText("CUADRADO seleccionado");
     }//GEN-LAST:event_toggleButtonCuadradoActionPerformed
 
     private void toggleButtonElipseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonElipseActionPerformed
         this.lienzo.setHerramienta(Lienzo2D.Herramienta.ELIPSE);
+        if (this.toggleButtonElipse.isSelected())
+            this.barraEstado.setText("ELIPSE seleccionada");
     }//GEN-LAST:event_toggleButtonElipseActionPerformed
 
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
@@ -328,13 +334,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuItemGuardarActionPerformed
 
-    private void barHerramientasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barHerramientasMouseEntered
-        this.barrraEstado.setText("Seleccionando herramienta");
-    }//GEN-LAST:event_barHerramientasMouseEntered
-
     private void buttonColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonColorActionPerformed
         Color colorSeleccionado = JColorChooser.showDialog(this, "Seleccionar color", null);
-    
+
         if (colorSeleccionado != null) {
             this.buttonColor.setBackground(colorSeleccionado);
             this.lienzo.setColor(colorSeleccionado);
@@ -345,30 +347,47 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void toggleButtonRellenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonRellenarActionPerformed
         this.lienzo.setRellenoActivo(this.toggleButtonRellenar.isSelected());
         if (this.toggleButtonRellenar.isSelected())
-            this.barrraEstado.setText("Relleno seleccionado");
+            this.barraEstado.setText("Relleno activado");
         else
-            this.barrraEstado.setText("Relleno desmarcado");
+            this.barraEstado.setText("Relleno desactivado");
     }//GEN-LAST:event_toggleButtonRellenarActionPerformed
 
     private void toggleButtonTransparenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonTransparenciaActionPerformed
         this.lienzo.setTransparenciaActiva(this.toggleButtonTransparencia.isSelected());
+        if (this.toggleButtonTransparencia.isSelected())
+            this.barraEstado.setText("Transparencia activada");
+        else
+            this.barraEstado.setText("Transparencia desactivada");
     }//GEN-LAST:event_toggleButtonTransparenciaActionPerformed
 
     private void toggleButtonAlisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonAlisarActionPerformed
         this.lienzo.setAlisadoActivo(this.toggleButtonAlisar.isSelected());
+        if (this.toggleButtonAlisar.isSelected())
+            this.barraEstado.setText("Alisado activado");
+        else
+            this.barraEstado.setText("Alisado desactivado");
     }//GEN-LAST:event_toggleButtonAlisarActionPerformed
 
     private void sliderGrosorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderGrosorStateChanged
         this.lienzo.setGrosor((int) this.sliderGrosor.getValue());
+        this.barraEstado.setText("Modificando grosor");
     }//GEN-LAST:event_sliderGrosorStateChanged
 
     private void toggleButtonFantasmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonFantasmaActionPerformed
         this.lienzo.setHerramienta(Lienzo2D.Herramienta.FANTASMA);
+        if (this.toggleButtonFantasma.isSelected())
+            this.barraEstado.setText("FANTASMA seleccionado");
     }//GEN-LAST:event_toggleButtonFantasmaActionPerformed
 
     private void toggleButtonSeleccionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_toggleButtonSeleccionStateChanged
         this.lienzo.setMoverActivo(this.toggleButtonSeleccion.isSelected());
+        if (this.toggleButtonSeleccion.isSelected())
+            this.barraEstado.setText("SELECCION activado");
     }//GEN-LAST:event_toggleButtonSeleccionStateChanged
+
+    private void barHerramientasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barHerramientasMouseExited
+        this.barraEstado.setText("");
+    }//GEN-LAST:event_barHerramientasMouseExited
 
     /**
      * @param args the command line arguments
@@ -407,8 +426,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barHerramientas;
-    private javax.swing.JMenuBar barMenu;
-    private javax.swing.JTextField barrraEstado;
+    private javax.swing.JTextField barraEstado;
+    private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton buttonColor;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;

@@ -63,9 +63,7 @@ public class Lienzo2D extends javax.swing.JPanel {
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         Graphics2D g2d = (Graphics2D) g;
-        
-        AbstractShape fantasma = new MiFantasma(new Point2D.Float(50,50));
-        fantasma.draw(g2d);
+
         for (Shape s : vShape) {
             ((AbstractShape) s).draw(g2d);
         }

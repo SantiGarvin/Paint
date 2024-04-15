@@ -31,44 +31,44 @@ public class MiFantasma extends AbstractShapeFilled {
      * @return El área del fantasma.
      */
     private Area createFantasma() {
-        Area fantasmaArea = new Area();
+        Area areaFantasma = new Area();
 
         // Semicircunferencia superior (más alta)
-        double cabezaAlto = alto * 0.5;
-        Ellipse2D.Double semicircle = new Ellipse2D.Double(posicion.getX(), posicion.getY(), ancho, cabezaAlto);
-        fantasmaArea.add(new Area(semicircle));
+        double altoCabeza = alto * 0.7;
+        Ellipse2D.Double semicirculo = new Ellipse2D.Double(posicion.getX(), posicion.getY(), ancho, altoCabeza);
+        areaFantasma.add(new Area(semicirculo));
 
         // Cuerpo
-        double bodyTop = posicion.getY() + cabezaAlto / 2;
-        double bodyBottom = posicion.getY() + alto;
+        double parteSuperiorCuerpo = posicion.getY() + altoCabeza / 2;
+        double parteInferiorCuerpo = posicion.getY() + alto;
 
         // Picos inferiores
-        int numPicos = 5;
-        double peakHeight = (alto - cabezaAlto) / 3;
-        double peakWidth = ancho / numPicos;
-        GeneralPath peaksPath = new GeneralPath();
-        peaksPath.moveTo(posicion.getX(), bodyTop);
-        for (int i = 0; i < numPicos; i++) {
-            peaksPath.lineTo(posicion.getX() + i * peakWidth, bodyBottom);
-            peaksPath.lineTo(posicion.getX() + (i + 0.5) * peakWidth, bodyBottom - peakHeight);
-            peaksPath.lineTo(posicion.getX() + (i + 1) * peakWidth, bodyBottom);
+        int numeroPicos = 5;
+        double alturaPico = (alto - altoCabeza) / 3;
+        double anchoPico = ancho / numeroPicos;
+        GeneralPath picos = new GeneralPath();
+        picos.moveTo(posicion.getX(), parteSuperiorCuerpo);
+        for (int i = 0; i < numeroPicos; i++) {
+            picos.lineTo(posicion.getX() + i * anchoPico, parteInferiorCuerpo);
+            picos.lineTo(posicion.getX() + (i + 0.5) * anchoPico, parteInferiorCuerpo - alturaPico);
+            picos.lineTo(posicion.getX() + (i + 1) * anchoPico, parteInferiorCuerpo);
         }
-        peaksPath.lineTo(posicion.getX() + ancho, bodyTop);
-        peaksPath.closePath();
+        picos.lineTo(posicion.getX() + ancho, parteSuperiorCuerpo);
+        picos.closePath();
 
         // Agregar los picos al área del fantasma
-        fantasmaArea.add(new Area(peaksPath));
+        areaFantasma.add(new Area(picos));
 
         // Ojos
-        double eyeSize = ancho / 5;
-        double eyeY = posicion.getY() + cabezaAlto / 2;
-        double eyeSpacing = ancho / 8; // Ajusta este valor para cambiar la separación entre los ojos
-        Ellipse2D.Double leftEye = new Ellipse2D.Double(posicion.getX() + ancho / 2 - eyeSize - eyeSpacing, eyeY, eyeSize, eyeSize);
-        Ellipse2D.Double rightEye = new Ellipse2D.Double(posicion.getX() + ancho / 2 + eyeSpacing, eyeY, eyeSize, eyeSize);
-        fantasmaArea.subtract(new Area(leftEye));
-        fantasmaArea.subtract(new Area(rightEye));
+        double tamanoOjo = ancho / 5;
+        double alturaOjo = posicion.getY() + altoCabeza / 2;
+        double espacioEntreOjos = ancho / 8; // Ajusta este valor para cambiar la separación entre los ojos
+        Ellipse2D.Double ojoIzquierdo = new Ellipse2D.Double(posicion.getX() + ancho / 2 - tamanoOjo - espacioEntreOjos, alturaOjo, tamanoOjo, tamanoOjo);
+        Ellipse2D.Double ojoDerecho = new Ellipse2D.Double(posicion.getX() + ancho / 2 + espacioEntreOjos, alturaOjo, tamanoOjo, tamanoOjo);
+        areaFantasma.subtract(new Area(ojoIzquierdo));
+        areaFantasma.subtract(new Area(ojoDerecho));
 
-        return fantasmaArea;
+        return areaFantasma;
     }
 
     /**
