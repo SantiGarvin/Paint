@@ -10,6 +10,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     public VentanaPrincipal() {
         initComponents();
+        this.setTitle("Paint2D");
     }
 
     @SuppressWarnings("unchecked")
