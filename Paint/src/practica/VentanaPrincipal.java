@@ -2,15 +2,24 @@ package practica;
 
 import sm.sgp.iu.Lienzo2D;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import javax.swing.JFileChooser;
 import javax.swing.JColorChooser;
 import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     public VentanaPrincipal() {
         initComponents();
         this.setTitle("Paint2D");
+    }
+
+    private Lienzo2D getSelectedLienzo() {
+        VentanaInterna vi;
+        vi = (VentanaInterna) escritorio.getSelectedFrame();
+        return vi != null ? vi.getLienzo2D() : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -40,7 +49,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         sliderGrosor = new javax.swing.JSlider();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         buttonVolcado = new javax.swing.JButton();
-        lienzo = new sm.sgp.iu.Lienzo2D();
+        escritorio = new javax.swing.JDesktopPane();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
@@ -53,7 +62,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(800, 500));
+        setMinimumSize(new java.awt.Dimension(1200, 900));
         setSize(new java.awt.Dimension(960, 540));
 
         panelCentral.setLayout(new java.awt.BorderLayout());
@@ -65,6 +74,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        buttonNuevo.setBackground(new java.awt.Color(242, 242, 242));
         buttonNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/nuevo.png"))); // NOI18N
         buttonNuevo.setToolTipText("Nuevo");
         buttonNuevo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -74,8 +84,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonNuevo.setMinimumSize(new java.awt.Dimension(35, 35));
         buttonNuevo.setPreferredSize(new java.awt.Dimension(35, 35));
         buttonNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonNuevoActionPerformed(evt);
+            }
+        });
         barHerramientas.add(buttonNuevo);
 
+        buttonAbrir.setBackground(new java.awt.Color(242, 242, 242));
         buttonAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/abrir.png"))); // NOI18N
         buttonAbrir.setToolTipText("Abrir archivo");
         buttonAbrir.setFocusable(false);
@@ -84,8 +100,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonAbrir.setMinimumSize(new java.awt.Dimension(35, 35));
         buttonAbrir.setPreferredSize(new java.awt.Dimension(35, 35));
         buttonAbrir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAbrirActionPerformed(evt);
+            }
+        });
         barHerramientas.add(buttonAbrir);
 
+        buttonGuardar.setBackground(new java.awt.Color(242, 242, 242));
         buttonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/guardar.png"))); // NOI18N
         buttonGuardar.setToolTipText("Guardar");
         buttonGuardar.setFocusable(false);
@@ -94,6 +116,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonGuardar.setMinimumSize(new java.awt.Dimension(35, 35));
         buttonGuardar.setPreferredSize(new java.awt.Dimension(35, 35));
         buttonGuardar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonGuardarActionPerformed(evt);
+            }
+        });
         barHerramientas.add(buttonGuardar);
         barHerramientas.add(jSeparator2);
 
@@ -275,6 +302,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barHerramientas.add(sliderGrosor);
         barHerramientas.add(jSeparator3);
 
+        buttonVolcado.setBackground(new java.awt.Color(242, 242, 242));
         buttonVolcado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/volcado.png"))); // NOI18N
         buttonVolcado.setToolTipText("Volcado");
         buttonVolcado.setFocusable(false);
@@ -283,24 +311,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonVolcado.setMinimumSize(new java.awt.Dimension(35, 35));
         buttonVolcado.setPreferredSize(new java.awt.Dimension(35, 35));
         buttonVolcado.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonVolcado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonVolcadoActionPerformed(evt);
+            }
+        });
         barHerramientas.add(buttonVolcado);
 
         panelCentral.add(barHerramientas, java.awt.BorderLayout.PAGE_START);
 
-        lienzo.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout lienzoLayout = new javax.swing.GroupLayout(lienzo);
-        lienzo.setLayout(lienzoLayout);
-        lienzoLayout.setHorizontalGroup(
-            lienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout escritorioLayout = new javax.swing.GroupLayout(escritorio);
+        escritorio.setLayout(escritorioLayout);
+        escritorioLayout.setHorizontalGroup(
+            escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 668, Short.MAX_VALUE)
         );
-        lienzoLayout.setVerticalGroup(
-            lienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        escritorioLayout.setVerticalGroup(
+            escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 415, Short.MAX_VALUE)
         );
 
-        panelCentral.add(lienzo, java.awt.BorderLayout.CENTER);
+        panelCentral.add(escritorio, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(panelCentral, java.awt.BorderLayout.CENTER);
 
@@ -350,41 +381,85 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void toggleButtonLineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonLineaActionPerformed
-        this.lienzo.setHerramienta(Lienzo2D.Herramienta.LINEA);
-        if (this.toggleButtonLinea.isSelected())
-            this.barraEstado.setText("LINEA seleccionada");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setHerramienta(Lienzo2D.Herramienta.LINEA);
+            if (this.toggleButtonLinea.isSelected()) {
+                this.barraEstado.setText("LINEA seleccionada");
+            }
+        }
     }//GEN-LAST:event_toggleButtonLineaActionPerformed
 
     private void toggleButtonCuadradoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonCuadradoActionPerformed
-        this.lienzo.setHerramienta(Lienzo2D.Herramienta.RECTANGULO);
-        if (this.toggleButtonCuadrado.isSelected())
-            this.barraEstado.setText("CUADRADO seleccionado");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setHerramienta(Lienzo2D.Herramienta.RECTANGULO);
+            if (this.toggleButtonCuadrado.isSelected()) {
+                this.barraEstado.setText("CUADRADO seleccionado");
+            }
+        }
     }//GEN-LAST:event_toggleButtonCuadradoActionPerformed
 
     private void toggleButtonElipseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonElipseActionPerformed
-        this.lienzo.setHerramienta(Lienzo2D.Herramienta.ELIPSE);
-        if (this.toggleButtonElipse.isSelected())
-            this.barraEstado.setText("ELIPSE seleccionada");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setHerramienta(Lienzo2D.Herramienta.ELIPSE);
+            if (this.toggleButtonElipse.isSelected()) {
+                this.barraEstado.setText("ELIPSE seleccionada");
+            }
+        }
     }//GEN-LAST:event_toggleButtonElipseActionPerformed
 
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
-        this.lienzo.borrar();
-        this.lienzo.repaint();
+        VentanaInterna vi = new VentanaInterna();
+        escritorio.add(vi);
+        vi.setVisible(true);
+        BufferedImage img;
+        img = new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
+        vi.getLienzo2D().setImage(img);
     }//GEN-LAST:event_menuItemNuevoActionPerformed
 
     private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
         JFileChooser dlg = new JFileChooser();
         int resp = dlg.showOpenDialog(this);
         if (resp == JFileChooser.APPROVE_OPTION) {
-            File f = dlg.getSelectedFile();
+            try {
+                File f = dlg.getSelectedFile();
+                BufferedImage img = ImageIO.read(f);
+                VentanaInterna vi = new VentanaInterna();
+                vi.getLienzo2D().setImage(img);
+                this.escritorio.add(vi);
+                vi.setTitle(f.getName());
+                vi.setVisible(true);
+            } catch (Exception ex) {
+                System.err.println("Error al leer la imagen");
+            }
         }
     }//GEN-LAST:event_menuItemAbrirActionPerformed
 
     private void menuItemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarActionPerformed
-        JFileChooser dlg = new JFileChooser();
-        int resp = dlg.showSaveDialog(this);
-        if (resp == JFileChooser.APPROVE_OPTION) {
-            File f = dlg.getSelectedFile();
+        VentanaInterna vi = (VentanaInterna) escritorio.getSelectedFrame();
+        if (vi != null) {
+            BufferedImage imgModificada = vi.getLienzo2D().getPaintedImage();
+            if (imgModificada != null) {
+                JFileChooser dlg = new JFileChooser();
+                dlg.setFileFilter(new FileNameExtensionFilter("Archivos PNG", "png"));
+                int resp = dlg.showSaveDialog(this);
+                if (resp == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        File f = dlg.getSelectedFile();
+                        String fileName = f.getAbsolutePath();
+                        if (!fileName.toLowerCase().endsWith(".png")) {
+                            fileName += ".png";
+                            f = new File(fileName);
+                        }
+                        ImageIO.write(imgModificada, "png", f);
+                        vi.setTitle(f.getName());
+                    } catch (Exception ex) {
+                        System.err.println("Error al guardar la imagen: " + ex.getMessage());
+                    }
+                }
+            }
         }
     }//GEN-LAST:event_menuItemGuardarActionPerformed
 
@@ -393,55 +468,106 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         if (colorSeleccionado != null) {
             this.buttonColor.setBackground(colorSeleccionado);
-            this.lienzo.setColor(colorSeleccionado);
+            Lienzo2D lienzo = this.getSelectedLienzo();
+            if (lienzo != null) {
+                lienzo.setColor(colorSeleccionado);
+                lienzo.updateFiguraSeleccionada();
+            }
             this.buttonColor.repaint();
         }
     }//GEN-LAST:event_buttonColorActionPerformed
 
     private void toggleButtonRellenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonRellenarActionPerformed
-        this.lienzo.setRellenoActivo(this.toggleButtonRellenar.isSelected());
-        if (this.toggleButtonRellenar.isSelected())
-            this.barraEstado.setText("Relleno activado");
-        else
-            this.barraEstado.setText("Relleno desactivado");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setRellenoActivo(this.toggleButtonRellenar.isSelected());
+            lienzo.updateFiguraSeleccionada();
+            if (this.toggleButtonRellenar.isSelected()) {
+                this.barraEstado.setText("Relleno activado");
+            } else {
+                this.barraEstado.setText("Relleno desactivado");
+            }
+        }
     }//GEN-LAST:event_toggleButtonRellenarActionPerformed
 
     private void toggleButtonTransparenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonTransparenciaActionPerformed
-        this.lienzo.setTransparenciaActiva(this.toggleButtonTransparencia.isSelected());
-        if (this.toggleButtonTransparencia.isSelected())
-            this.barraEstado.setText("Transparencia activada");
-        else
-            this.barraEstado.setText("Transparencia desactivada");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setTransparenciaActiva(this.toggleButtonTransparencia.isSelected());
+            lienzo.updateFiguraSeleccionada();
+            if (this.toggleButtonTransparencia.isSelected()) {
+                this.barraEstado.setText("Transparencia activada");
+            } else {
+                this.barraEstado.setText("Transparencia desactivada");
+            }
+        }
     }//GEN-LAST:event_toggleButtonTransparenciaActionPerformed
 
     private void toggleButtonAlisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonAlisarActionPerformed
-        this.lienzo.setAlisadoActivo(this.toggleButtonAlisar.isSelected());
-        if (this.toggleButtonAlisar.isSelected())
-            this.barraEstado.setText("Alisado activado");
-        else
-            this.barraEstado.setText("Alisado desactivado");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setAlisadoActivo(this.toggleButtonAlisar.isSelected());
+            lienzo.updateFiguraSeleccionada();
+            if (this.toggleButtonAlisar.isSelected()) {
+                this.barraEstado.setText("Alisado activado");
+            } else {
+                this.barraEstado.setText("Alisado desactivado");
+            }
+        }
     }//GEN-LAST:event_toggleButtonAlisarActionPerformed
 
     private void sliderGrosorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderGrosorStateChanged
-        this.lienzo.setGrosor((int) this.sliderGrosor.getValue());
-        this.barraEstado.setText("Modificando grosor");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setGrosor((int) this.sliderGrosor.getValue());
+            lienzo.updateFiguraSeleccionada();
+            this.barraEstado.setText("Modificando grosor");
+        }
     }//GEN-LAST:event_sliderGrosorStateChanged
 
     private void toggleButtonFantasmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonFantasmaActionPerformed
-        this.lienzo.setHerramienta(Lienzo2D.Herramienta.FANTASMA);
-        if (this.toggleButtonFantasma.isSelected())
-            this.barraEstado.setText("FANTASMA seleccionado");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setHerramienta(Lienzo2D.Herramienta.FANTASMA);
+            if (this.toggleButtonFantasma.isSelected()) {
+                this.barraEstado.setText("FANTASMA seleccionado");
+            }
+        }
     }//GEN-LAST:event_toggleButtonFantasmaActionPerformed
 
     private void toggleButtonSeleccionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_toggleButtonSeleccionStateChanged
-        this.lienzo.setMoverActivo(this.toggleButtonSeleccion.isSelected());
-        if (this.toggleButtonSeleccion.isSelected())
-            this.barraEstado.setText("SELECCION activado");
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.setMoverActivo(this.toggleButtonSeleccion.isSelected());
+            if (this.toggleButtonSeleccion.isSelected()) {
+                this.barraEstado.setText("Edición");
+            }
+            this.repaint();
+        }
     }//GEN-LAST:event_toggleButtonSeleccionStateChanged
 
     private void barHerramientasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barHerramientasMouseExited
         this.barraEstado.setText("");
     }//GEN-LAST:event_barHerramientasMouseExited
+
+    private void buttonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNuevoActionPerformed
+        menuItemNuevoActionPerformed(evt);
+    }//GEN-LAST:event_buttonNuevoActionPerformed
+
+    private void buttonAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAbrirActionPerformed
+        menuItemAbrirActionPerformed(evt);
+    }//GEN-LAST:event_buttonAbrirActionPerformed
+
+    private void buttonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGuardarActionPerformed
+        menuItemGuardarActionPerformed(evt);
+    }//GEN-LAST:event_buttonGuardarActionPerformed
+
+    private void buttonVolcadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonVolcadoActionPerformed
+        Lienzo2D lienzo = getSelectedLienzo();
+        if (lienzo != null) {
+            lienzo.volcarFiguraSeleccionada();
+        }
+    }//GEN-LAST:event_buttonVolcadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -489,12 +615,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonGuardar;
     private javax.swing.JButton buttonNuevo;
     private javax.swing.JButton buttonVolcado;
+    private javax.swing.JDesktopPane escritorio;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
-    private sm.sgp.iu.Lienzo2D lienzo;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenu menuImagen;
     private javax.swing.JMenuItem menuItemAbrir;

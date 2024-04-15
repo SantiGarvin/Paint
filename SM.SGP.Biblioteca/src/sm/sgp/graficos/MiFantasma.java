@@ -88,8 +88,8 @@ public class MiFantasma extends AbstractShapeFilled {
      */
     @Override
     public void setLocation(Point2D pos) {
-        double dx = pos.getX() - posicion.getX() + ancho/2;
-        double dy = pos.getY() - posicion.getY() + alto/2;
+        double dx = pos.getX() - posicion.getX();
+        double dy = pos.getY() - posicion.getY();
         posicion = pos;
         fantasma.transform(AffineTransform.getTranslateInstance(dx, dy));
     }

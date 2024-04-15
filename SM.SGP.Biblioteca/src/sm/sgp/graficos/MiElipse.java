@@ -37,6 +37,19 @@ public class MiElipse extends AbstractShapeFilled {
     }
 
     /**
+     * Constructor de la clase MiElipse que recibe las coordenadas del centro y
+     * el radio. Crea una nueva elipse con el centro y el radio especificados.
+     *
+     * @param centerX La coordenada x del centro de la elipse.
+     * @param centerY La coordenada y del centro de la elipse.
+     * @param radio El radio de la elipse.
+     */
+    public MiElipse(double centerX, double centerY, double radio) {
+        elipse = new Ellipse2D.Float();
+        elipse.setFrame(centerX - radio, centerY - radio, radio * 2, radio * 2);
+    }
+
+    /**
      * Establece la elipse a partir de dos puntos que representan las esquinas
      * opuestas del rectángulo que la encierra.
      *

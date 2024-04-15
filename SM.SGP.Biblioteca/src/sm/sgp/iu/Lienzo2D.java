@@ -9,8 +9,10 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.ArrayList;
 import sm.sgp.graficos.*;
@@ -30,18 +32,22 @@ public class Lienzo2D extends javax.swing.JPanel {
     private Color color = Color.black;
     private Herramienta herramienta = Herramienta.LINEA;
     private boolean relleno = false;
-    private boolean mover = false;
+    private boolean edicion = false;
 
     private Point2D posicionPressed = new Point(0, 0);
     private Point2D posicionDragged = new Point(0, 0);
 
     private Shape figura = new Line2D.Float();
+    private Shape figuraSeleccionada = null;
+    private MarcadorSeleccion marcadorSeleccion = null;
     private List<Shape> vShape = new ArrayList<>();
 
     private Stroke grosor = new BasicStroke();
 
     private boolean transparenciaActiva = false;
     private boolean alisadoActivo = false;
+
+    private BufferedImage img = null;
 
     /**
      * Constructor de la clase Lienzo2D.
@@ -64,8 +70,16 @@ public class Lienzo2D extends javax.swing.JPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
+        if (img != null) {
+            g2d.drawImage(img, 0, 0, this);
+        }
+
         for (Shape s : vShape) {
             ((AbstractShape) s).draw(g2d);
+        }
+
+        if (edicion && marcadorSeleccion != null) {
+            marcadorSeleccion.draw(g2d);
         }
     }
 
@@ -104,6 +118,30 @@ public class Lienzo2D extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setImage(BufferedImage img) {
+        this.img = img;
+        if (img != null) {
+            setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+        }
+    }
+
+    public BufferedImage getImage() {
+        return img;
+    }
+
+    public BufferedImage getPaintedImage() {
+        BufferedImage imgout = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2dImagen = imgout.createGraphics();
+        if (img != null) {
+            g2dImagen.drawImage(img, 0, 0, this);
+        }
+        for (Shape s : vShape) {
+            ((AbstractShape) s).draw(g2dImagen);
+        }
+        g2dImagen.dispose();
+        return imgout;
+    }
+
     /**
      * Verifica si la funcionalidad de mover está activa.
      *
@@ -111,17 +149,17 @@ public class Lienzo2D extends javax.swing.JPanel {
      * contrario.
      */
     public boolean isMoverActivo() {
-        return mover;
+        return edicion;
     }
 
     /**
      * Establece el estado de la funcionalidad de mover.
      *
-     * @param mover true para activar la funcionalidad de mover, false
-     * para desactivarla.
+     * @param mover true para activar la funcionalidad de mover, false para
+     * desactivarla.
      */
     public void setMoverActivo(boolean mover) {
-        this.mover = mover;
+        this.edicion = mover;
     }
 
     /**
@@ -243,6 +281,10 @@ public class Lienzo2D extends javax.swing.JPanel {
         return alisadoActivo;
     }
 
+    public Shape getFiguraSeleccionada() {
+        return figuraSeleccionada;
+    }
+
     /**
      * Método que busca la figura seleccionada en una posición dada.
      *
@@ -253,10 +295,39 @@ public class Lienzo2D extends javax.swing.JPanel {
         for (int i = vShape.size() - 1; i >= 0; i--) {
             Shape s = vShape.get(i);
             if (s.contains(p)) {
+                figuraSeleccionada = s;
+                marcadorSeleccion = new MarcadorSeleccion(((AbstractShape) s).getLocation());
                 return s;
             }
         }
+        figuraSeleccionada = null;
+        marcadorSeleccion = null;
         return null;
+    }
+
+    public void updateFiguraSeleccionada() {
+        if (figuraSeleccionada != null) {
+            ((AbstractShape) figuraSeleccionada).setColor(color);
+            ((AbstractShape) figuraSeleccionada).setGrosor(grosor);
+            ((AbstractShape) figuraSeleccionada).setTransparenciaActiva(transparenciaActiva);
+            ((AbstractShape) figuraSeleccionada).setAlisadoActivo(alisadoActivo);
+            if (figuraSeleccionada instanceof AbstractShapeFilled) {
+                ((AbstractShapeFilled) figuraSeleccionada).setRelleno(relleno);
+            }
+            this.repaint();
+        }
+    }
+
+    public void volcarFiguraSeleccionada() {
+        if (figuraSeleccionada != null) {
+            Graphics2D g2d = img.createGraphics();
+            ((AbstractShape) figuraSeleccionada).draw(g2d);
+            g2d.dispose();
+            vShape.remove(figuraSeleccionada);
+            figuraSeleccionada = null;
+            marcadorSeleccion = null;
+            repaint();
+        }
     }
 
     /**
@@ -267,7 +338,7 @@ public class Lienzo2D extends javax.swing.JPanel {
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         this.posicionPressed = evt.getPoint();
 
-        if (mover) {
+        if (edicion) {
             figura = figuraSeleccionada(evt.getPoint());
         } else {
             Shape figuraAux = null;
@@ -308,8 +379,9 @@ public class Lienzo2D extends javax.swing.JPanel {
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         this.posicionDragged = evt.getPoint();
 
-        if (mover) {
-            if (figura != null) {
+        if (figura != null) {
+
+            if (edicion) {
                 if (figura instanceof MiLinea) {
                     ((MiLinea) figura).setLocation(posicionDragged);
                 } else if (figura instanceof MiRectangulo) {
@@ -319,10 +391,11 @@ public class Lienzo2D extends javax.swing.JPanel {
                 } else if (figura instanceof MiFantasma) {
                     ((MiFantasma) figura).setLocation(posicionDragged);
                 }
-            }
-        } else {
+                if (marcadorSeleccion != null) {
+                    marcadorSeleccion.setLocation(((AbstractShape) figura).getLocation());
+                }
+            } else {
 
-            if (figura != null) {
                 switch (herramienta) {
                     case LINEA:
                         ((MiLinea) figura).setLine(posicionPressed, posicionDragged);

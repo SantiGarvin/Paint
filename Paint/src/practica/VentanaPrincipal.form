@@ -54,7 +54,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[800, 500]"/>
+      <Dimension value="[1200, 900]"/>
     </Property>
     <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[960, 540]"/>
@@ -106,6 +106,9 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="buttonNuevo">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="f2" green="f2" red="f2" type="rgb"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/iconos/nuevo.png"/>
                 </Property>
@@ -128,9 +131,15 @@
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonNuevoActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="buttonAbrir">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="f2" green="f2" red="f2" type="rgb"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/iconos/abrir.png"/>
                 </Property>
@@ -148,9 +157,15 @@
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonAbrirActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="buttonGuardar">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="f2" green="f2" red="f2" type="rgb"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/iconos/guardar.png"/>
                 </Property>
@@ -168,6 +183,9 @@
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonGuardarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
             </Component>
@@ -504,6 +522,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="buttonVolcado">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="f2" green="f2" red="f2" type="rgb"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/iconos/volcado.png"/>
                 </Property>
@@ -521,15 +542,13 @@
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonVolcadoActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
-        <Container class="sm.sgp.iu.Lienzo2D" name="lienzo">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-          </Properties>
+        <Container class="javax.swing.JDesktopPane" name="escritorio">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="Center"/>
@@ -544,7 +563,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="415" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
