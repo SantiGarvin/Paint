@@ -22,6 +22,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         panelCentral = new javax.swing.JPanel();
         barHerramientas = new javax.swing.JToolBar();
+        buttonNuevo = new javax.swing.JButton();
+        buttonAbrir = new javax.swing.JButton();
+        buttonGuardar = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
         toggleButtonLinea = new javax.swing.JToggleButton();
         toggleButtonCuadrado = new javax.swing.JToggleButton();
         toggleButtonElipse = new javax.swing.JToggleButton();
@@ -34,6 +38,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         toggleButtonTransparencia = new javax.swing.JToggleButton();
         toggleButtonAlisar = new javax.swing.JToggleButton();
         sliderGrosor = new javax.swing.JSlider();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        buttonVolcado = new javax.swing.JButton();
         lienzo = new sm.sgp.iu.Lienzo2D();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
@@ -42,6 +48,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         menuItemNuevo = new javax.swing.JMenuItem();
         menuItemAbrir = new javax.swing.JMenuItem();
         menuItemGuardar = new javax.swing.JMenuItem();
+        menuImagen = new javax.swing.JMenu();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -57,6 +64,38 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 barHerramientasMouseExited(evt);
             }
         });
+
+        buttonNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/nuevo.png"))); // NOI18N
+        buttonNuevo.setToolTipText("Nuevo");
+        buttonNuevo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        buttonNuevo.setFocusable(false);
+        buttonNuevo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonNuevo.setMaximumSize(new java.awt.Dimension(35, 35));
+        buttonNuevo.setMinimumSize(new java.awt.Dimension(35, 35));
+        buttonNuevo.setPreferredSize(new java.awt.Dimension(35, 35));
+        buttonNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barHerramientas.add(buttonNuevo);
+
+        buttonAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/abrir.png"))); // NOI18N
+        buttonAbrir.setToolTipText("Abrir archivo");
+        buttonAbrir.setFocusable(false);
+        buttonAbrir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonAbrir.setMaximumSize(new java.awt.Dimension(35, 35));
+        buttonAbrir.setMinimumSize(new java.awt.Dimension(35, 35));
+        buttonAbrir.setPreferredSize(new java.awt.Dimension(35, 35));
+        buttonAbrir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barHerramientas.add(buttonAbrir);
+
+        buttonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/guardar.png"))); // NOI18N
+        buttonGuardar.setToolTipText("Guardar");
+        buttonGuardar.setFocusable(false);
+        buttonGuardar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonGuardar.setMaximumSize(new java.awt.Dimension(35, 35));
+        buttonGuardar.setMinimumSize(new java.awt.Dimension(35, 35));
+        buttonGuardar.setPreferredSize(new java.awt.Dimension(35, 35));
+        buttonGuardar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barHerramientas.add(buttonGuardar);
+        barHerramientas.add(jSeparator2);
 
         toggleButtonLinea.setBackground(new java.awt.Color(242, 242, 242));
         buttonGroup1.add(toggleButtonLinea);
@@ -234,6 +273,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         barHerramientas.add(sliderGrosor);
+        barHerramientas.add(jSeparator3);
+
+        buttonVolcado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/volcado.png"))); // NOI18N
+        buttonVolcado.setToolTipText("Volcado");
+        buttonVolcado.setFocusable(false);
+        buttonVolcado.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonVolcado.setMaximumSize(new java.awt.Dimension(35, 35));
+        buttonVolcado.setMinimumSize(new java.awt.Dimension(35, 35));
+        buttonVolcado.setPreferredSize(new java.awt.Dimension(35, 35));
+        buttonVolcado.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barHerramientas.add(buttonVolcado);
 
         panelCentral.add(barHerramientas, java.awt.BorderLayout.PAGE_START);
 
@@ -290,6 +340,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         menuArchivo.add(menuItemGuardar);
 
         barraMenu.add(menuArchivo);
+
+        menuImagen.setText("Imagen");
+        barraMenu.add(menuImagen);
 
         setJMenuBar(barraMenu);
 
@@ -429,14 +482,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar barHerramientas;
     private javax.swing.JTextField barraEstado;
     private javax.swing.JMenuBar barraMenu;
+    private javax.swing.JButton buttonAbrir;
     private javax.swing.JButton buttonColor;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JButton buttonGuardar;
+    private javax.swing.JButton buttonNuevo;
+    private javax.swing.JButton buttonVolcado;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private sm.sgp.iu.Lienzo2D lienzo;
     private javax.swing.JMenu menuArchivo;
+    private javax.swing.JMenu menuImagen;
     private javax.swing.JMenuItem menuItemAbrir;
     private javax.swing.JMenuItem menuItemGuardar;
     private javax.swing.JMenuItem menuItemNuevo;

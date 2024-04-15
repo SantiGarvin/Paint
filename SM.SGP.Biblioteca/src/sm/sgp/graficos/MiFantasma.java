@@ -33,7 +33,7 @@ public class MiFantasma extends AbstractShapeFilled {
     private Area createFantasma() {
         Area areaFantasma = new Area();
 
-        // Semicircunferencia superior (más alta)
+        // Semicircunferencia superior
         double altoCabeza = alto * 0.7;
         Ellipse2D.Double semicirculo = new Ellipse2D.Double(posicion.getX(), posicion.getY(), ancho, altoCabeza);
         areaFantasma.add(new Area(semicirculo));
@@ -62,7 +62,7 @@ public class MiFantasma extends AbstractShapeFilled {
         // Ojos
         double tamanoOjo = ancho / 5;
         double alturaOjo = posicion.getY() + altoCabeza / 2;
-        double espacioEntreOjos = ancho / 8; // Ajusta este valor para cambiar la separación entre los ojos
+        double espacioEntreOjos = ancho / 8;
         Ellipse2D.Double ojoIzquierdo = new Ellipse2D.Double(posicion.getX() + ancho / 2 - tamanoOjo - espacioEntreOjos, alturaOjo, tamanoOjo, tamanoOjo);
         Ellipse2D.Double ojoDerecho = new Ellipse2D.Double(posicion.getX() + ancho / 2 + espacioEntreOjos, alturaOjo, tamanoOjo, tamanoOjo);
         areaFantasma.subtract(new Area(ojoIzquierdo));
@@ -88,8 +88,8 @@ public class MiFantasma extends AbstractShapeFilled {
      */
     @Override
     public void setLocation(Point2D pos) {
-        double dx = pos.getX() - posicion.getX();
-        double dy = pos.getY() - posicion.getY();
+        double dx = pos.getX() - posicion.getX() + ancho/2;
+        double dy = pos.getY() - posicion.getY() + alto/2;
         posicion = pos;
         fantasma.transform(AffineTransform.getTranslateInstance(dx, dy));
     }
