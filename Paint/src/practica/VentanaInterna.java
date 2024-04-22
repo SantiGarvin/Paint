@@ -10,6 +10,7 @@ public class VentanaInterna extends javax.swing.JInternalFrame {
     public VentanaInterna() {
         initComponents();
         this.setTitle("Nueva imagen");
+        this.setSize(800,800);
     }
 
     public Lienzo2D getLienzo2D() {
@@ -53,7 +54,6 @@ public class VentanaInterna extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;

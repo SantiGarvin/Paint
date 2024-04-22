@@ -2,11 +2,15 @@ package practica;
 
 import sm.sgp.iu.Lienzo2D;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JFileChooser;
 import javax.swing.JColorChooser;
 import java.io.File;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+import javax.swing.event.InternalFrameAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
@@ -14,6 +18,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     public VentanaPrincipal() {
         initComponents();
         this.setTitle("Paint2D");
+        this.setSize(new Dimension(1000, 900));
+
     }
 
     private Lienzo2D getSelectedLienzo() {
@@ -30,13 +36,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         panelCentral = new javax.swing.JPanel();
-        barHerramientas = new javax.swing.JToolBar();
+        barraHerramientas = new javax.swing.JToolBar();
         buttonNuevo = new javax.swing.JButton();
         buttonAbrir = new javax.swing.JButton();
         buttonGuardar = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         toggleButtonLinea = new javax.swing.JToggleButton();
-        toggleButtonCuadrado = new javax.swing.JToggleButton();
+        toggleButtonRectangulo = new javax.swing.JToggleButton();
         toggleButtonElipse = new javax.swing.JToggleButton();
         toggleButtonFantasma = new javax.swing.JToggleButton();
         toggleButtonSeleccion = new javax.swing.JToggleButton();
@@ -67,10 +73,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         panelCentral.setLayout(new java.awt.BorderLayout());
 
-        barHerramientas.setRollover(true);
-        barHerramientas.addMouseListener(new java.awt.event.MouseAdapter() {
+        barraHerramientas.setRollover(true);
+        barraHerramientas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                barHerramientasMouseExited(evt);
+                barraHerramientasMouseExited(evt);
             }
         });
 
@@ -89,7 +95,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 buttonNuevoActionPerformed(evt);
             }
         });
-        barHerramientas.add(buttonNuevo);
+        barraHerramientas.add(buttonNuevo);
 
         buttonAbrir.setBackground(new java.awt.Color(242, 242, 242));
         buttonAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/abrir.png"))); // NOI18N
@@ -105,7 +111,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 buttonAbrirActionPerformed(evt);
             }
         });
-        barHerramientas.add(buttonAbrir);
+        barraHerramientas.add(buttonAbrir);
 
         buttonGuardar.setBackground(new java.awt.Color(242, 242, 242));
         buttonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/guardar.png"))); // NOI18N
@@ -121,8 +127,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 buttonGuardarActionPerformed(evt);
             }
         });
-        barHerramientas.add(buttonGuardar);
-        barHerramientas.add(jSeparator2);
+        barraHerramientas.add(buttonGuardar);
+        barraHerramientas.add(jSeparator2);
 
         toggleButtonLinea.setBackground(new java.awt.Color(242, 242, 242));
         buttonGroup1.add(toggleButtonLinea);
@@ -144,26 +150,26 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonLineaActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonLinea);
+        barraHerramientas.add(toggleButtonLinea);
 
-        toggleButtonCuadrado.setBackground(new java.awt.Color(242, 242, 242));
-        buttonGroup1.add(toggleButtonCuadrado);
-        toggleButtonCuadrado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rectangulo.png"))); // NOI18N
-        toggleButtonCuadrado.setToolTipText("Cuadrado");
-        toggleButtonCuadrado.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        toggleButtonCuadrado.setFocusable(false);
-        toggleButtonCuadrado.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        toggleButtonCuadrado.setInheritsPopupMenu(true);
-        toggleButtonCuadrado.setMaximumSize(new java.awt.Dimension(35, 35));
-        toggleButtonCuadrado.setMinimumSize(new java.awt.Dimension(35, 35));
-        toggleButtonCuadrado.setPreferredSize(new java.awt.Dimension(35, 35));
-        toggleButtonCuadrado.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        toggleButtonCuadrado.addActionListener(new java.awt.event.ActionListener() {
+        toggleButtonRectangulo.setBackground(new java.awt.Color(242, 242, 242));
+        buttonGroup1.add(toggleButtonRectangulo);
+        toggleButtonRectangulo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rectangulo.png"))); // NOI18N
+        toggleButtonRectangulo.setToolTipText("Cuadrado");
+        toggleButtonRectangulo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        toggleButtonRectangulo.setFocusable(false);
+        toggleButtonRectangulo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        toggleButtonRectangulo.setInheritsPopupMenu(true);
+        toggleButtonRectangulo.setMaximumSize(new java.awt.Dimension(35, 35));
+        toggleButtonRectangulo.setMinimumSize(new java.awt.Dimension(35, 35));
+        toggleButtonRectangulo.setPreferredSize(new java.awt.Dimension(35, 35));
+        toggleButtonRectangulo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toggleButtonRectangulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toggleButtonCuadradoActionPerformed(evt);
+                toggleButtonRectanguloActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonCuadrado);
+        barraHerramientas.add(toggleButtonRectangulo);
 
         toggleButtonElipse.setBackground(new java.awt.Color(242, 242, 242));
         buttonGroup1.add(toggleButtonElipse);
@@ -183,7 +189,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonElipseActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonElipse);
+        barraHerramientas.add(toggleButtonElipse);
 
         toggleButtonFantasma.setBackground(new java.awt.Color(242, 242, 242));
         buttonGroup1.add(toggleButtonFantasma);
@@ -201,7 +207,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonFantasmaActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonFantasma);
+        barraHerramientas.add(toggleButtonFantasma);
 
         toggleButtonSeleccion.setBackground(new java.awt.Color(242, 242, 242));
         buttonGroup1.add(toggleButtonSeleccion);
@@ -219,8 +225,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonSeleccionStateChanged(evt);
             }
         });
-        barHerramientas.add(toggleButtonSeleccion);
-        barHerramientas.add(jSeparator1);
+        barraHerramientas.add(toggleButtonSeleccion);
+        barraHerramientas.add(jSeparator1);
 
         jPanel2.setLayout(new javax.swing.OverlayLayout(jPanel2));
 
@@ -239,7 +245,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         jPanel2.add(buttonColor);
 
-        barHerramientas.add(jPanel2);
+        barraHerramientas.add(jPanel2);
 
         toggleButtonRellenar.setBackground(new java.awt.Color(242, 242, 242));
         toggleButtonRellenar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rellenar.png"))); // NOI18N
@@ -255,7 +261,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonRellenarActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonRellenar);
+        barraHerramientas.add(toggleButtonRellenar);
 
         toggleButtonTransparencia.setBackground(new java.awt.Color(242, 242, 242));
         toggleButtonTransparencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/transparencia.png"))); // NOI18N
@@ -271,7 +277,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonTransparenciaActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonTransparencia);
+        barraHerramientas.add(toggleButtonTransparencia);
 
         toggleButtonAlisar.setBackground(new java.awt.Color(242, 242, 242));
         toggleButtonAlisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/alisar.png"))); // NOI18N
@@ -287,7 +293,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 toggleButtonAlisarActionPerformed(evt);
             }
         });
-        barHerramientas.add(toggleButtonAlisar);
+        barraHerramientas.add(toggleButtonAlisar);
 
         sliderGrosor.setMaximum(10);
         sliderGrosor.setToolTipText("Grosor");
@@ -299,8 +305,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 sliderGrosorStateChanged(evt);
             }
         });
-        barHerramientas.add(sliderGrosor);
-        barHerramientas.add(jSeparator3);
+        barraHerramientas.add(sliderGrosor);
+        barraHerramientas.add(jSeparator3);
 
         buttonVolcado.setBackground(new java.awt.Color(242, 242, 242));
         buttonVolcado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/volcado.png"))); // NOI18N
@@ -316,9 +322,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 buttonVolcadoActionPerformed(evt);
             }
         });
-        barHerramientas.add(buttonVolcado);
+        barraHerramientas.add(buttonVolcado);
 
-        panelCentral.add(barHerramientas, java.awt.BorderLayout.PAGE_START);
+        panelCentral.add(barraHerramientas, java.awt.BorderLayout.PAGE_START);
 
         javax.swing.GroupLayout escritorioLayout = new javax.swing.GroupLayout(escritorio);
         escritorio.setLayout(escritorioLayout);
@@ -390,15 +396,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_toggleButtonLineaActionPerformed
 
-    private void toggleButtonCuadradoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonCuadradoActionPerformed
+    private void toggleButtonRectanguloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonRectanguloActionPerformed
         Lienzo2D lienzo = getSelectedLienzo();
         if (lienzo != null) {
             lienzo.setHerramienta(Lienzo2D.Herramienta.RECTANGULO);
-            if (this.toggleButtonCuadrado.isSelected()) {
+            if (this.toggleButtonRectangulo.isSelected()) {
                 this.barraEstado.setText("CUADRADO seleccionado");
             }
         }
-    }//GEN-LAST:event_toggleButtonCuadradoActionPerformed
+    }//GEN-LAST:event_toggleButtonRectanguloActionPerformed
 
     private void toggleButtonElipseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleButtonElipseActionPerformed
         Lienzo2D lienzo = getSelectedLienzo();
@@ -410,18 +416,65 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_toggleButtonElipseActionPerformed
 
+    private void updateDefault(Lienzo2D lienzo) {
+        // Establecer los valores por defecto para los atributos y herramientas
+        lienzo.setHerramienta(Lienzo2D.Herramienta.LINEA);
+        lienzo.setRellenoActivo(false);
+        lienzo.setAlisadoActivo(false);
+        lienzo.setTransparenciaActiva(false);
+        lienzo.setGrosor(1);
+        lienzo.setColor(Color.BLACK);
+        lienzo.setMoverActivo(false);
+
+        // Actualizar el estado de los botones y atributos en la barra de herramientas
+        toggleButtonLinea.setSelected(true);
+        toggleButtonRectangulo.setSelected(false);
+        toggleButtonElipse.setSelected(false);
+        toggleButtonFantasma.setSelected(false);
+        toggleButtonRellenar.setSelected(false);
+        toggleButtonAlisar.setSelected(false);
+        toggleButtonTransparencia.setSelected(false);
+        sliderGrosor.setValue(0);
+        buttonColor.setBackground(Color.BLACK);
+        toggleButtonSeleccion.setSelected(false);
+    }
+
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
         VentanaInterna vi = new VentanaInterna();
         escritorio.add(vi);
         vi.setVisible(true);
-        BufferedImage img;
-        img = new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
+
+        vi.addInternalFrameListener(new ManejadorVentanaInterna());
+
+        int width = Lienzo2D.getAREA_SIZE();
+        int height = Lienzo2D.getAREA_SIZE();
+
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
+
+        // Establecer el color de fondo a blanco
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+
+        g2d.dispose();
+
         vi.getLienzo2D().setImage(img);
+        vi.getLienzo2D().setPreferredSize(new Dimension(width, height));
+
+        Lienzo2D lienzo = vi.getLienzo2D();
+        updateDefault(lienzo);
     }//GEN-LAST:event_menuItemNuevoActionPerformed
 
     private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
         JFileChooser dlg = new JFileChooser();
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (*.png, *.jpg, *.jpeg, *.gif, *.bmp)", "png", "jpg", "jpeg", "gif", "bmp");
+        dlg.addChoosableFileFilter(filter);
+
+        dlg.setAcceptAllFileFilterUsed(true);
+
         int resp = dlg.showOpenDialog(this);
+
         if (resp == JFileChooser.APPROVE_OPTION) {
             try {
                 File f = dlg.getSelectedFile();
@@ -429,13 +482,26 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 VentanaInterna vi = new VentanaInterna();
                 vi.getLienzo2D().setImage(img);
                 this.escritorio.add(vi);
-                vi.setTitle(f.getName());
+                String extension = getFileExtension(f.getName());
+                vi.setTitle(f.getName() + " (" + extension.toUpperCase() + ")");
+
+                vi.addInternalFrameListener(new ManejadorVentanaInterna());
+
                 vi.setVisible(true);
             } catch (Exception ex) {
-                System.err.println("Error al leer la imagen");
+                System.err.println("Error al leer la imagen: " + ex.getMessage());
             }
         }
     }//GEN-LAST:event_menuItemAbrirActionPerformed
+
+    private String getFileExtension(String fileName) {
+        String extension = "";
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            extension = fileName.substring(dotIndex + 1).toLowerCase();
+        }
+        return extension;
+    }
 
     private void menuItemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarActionPerformed
         VentanaInterna vi = (VentanaInterna) escritorio.getSelectedFrame();
@@ -443,20 +509,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             BufferedImage imgModificada = vi.getLienzo2D().getPaintedImage();
             if (imgModificada != null) {
                 JFileChooser dlg = new JFileChooser();
-                dlg.setFileFilter(new FileNameExtensionFilter("Archivos PNG", "png"));
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (*.png, *.jpg, *.jpeg, *.gif, *.bmp)", "png", "jpg", "jpeg", "gif", "bmp");
+                dlg.setFileFilter(filter);
                 int resp = dlg.showSaveDialog(this);
                 if (resp == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        File f = dlg.getSelectedFile();
-                        String fileName = f.getAbsolutePath();
-                        if (!fileName.toLowerCase().endsWith(".png")) {
-                            fileName += ".png";
-                            f = new File(fileName);
+                    File f = dlg.getSelectedFile();
+                    String fileName = f.getAbsolutePath();
+                    String extension = getFileExtension(fileName);
+                    String selectedFormat = extension;
+                    if (extension.isEmpty()) {
+                        String[] formatNames = {"png", "jpg", "jpeg", "gif", "bmp"};
+                        selectedFormat = (String) JOptionPane.showInputDialog(this, "Seleccione el formato de imagen:", "Formato de imagen", JOptionPane.PLAIN_MESSAGE, null, formatNames, formatNames[0]);
+                        if (selectedFormat != null) {
+                            fileName += "." + selectedFormat;
                         }
-                        ImageIO.write(imgModificada, "png", f);
-                        vi.setTitle(f.getName());
-                    } catch (Exception ex) {
-                        System.err.println("Error al guardar la imagen: " + ex.getMessage());
+                    }
+                    if (selectedFormat != null) {
+                        try {
+                            File file = new File(fileName);
+                            BufferedImage convertedImage = new BufferedImage(imgModificada.getWidth(), imgModificada.getHeight(), BufferedImage.TYPE_INT_RGB);
+                            Graphics2D g2d = convertedImage.createGraphics();
+                            g2d.drawImage(imgModificada, 0, 0, null);
+                            g2d.dispose();
+                            ImageIO.write(convertedImage, selectedFormat, file);
+                            vi.setTitle(file.getName());
+                        } catch (Exception ex) {
+                            System.err.println("Error al guardar la imagen: " + ex.getMessage());
+                        }
                     }
                 }
             }
@@ -546,9 +625,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_toggleButtonSeleccionStateChanged
 
-    private void barHerramientasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barHerramientasMouseExited
+    private void barraHerramientasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barraHerramientasMouseExited
         this.barraEstado.setText("");
-    }//GEN-LAST:event_barHerramientasMouseExited
+    }//GEN-LAST:event_barraHerramientasMouseExited
 
     private void buttonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNuevoActionPerformed
         menuItemNuevoActionPerformed(evt);
@@ -568,6 +647,31 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             lienzo.volcarFiguraSeleccionada();
         }
     }//GEN-LAST:event_buttonVolcadoActionPerformed
+
+    private class ManejadorVentanaInterna extends InternalFrameAdapter {
+
+        @Override
+        public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            VentanaInterna vi = (VentanaInterna) evt.getInternalFrame();
+            Lienzo2D lienzo = vi.getLienzo2D();
+
+            // Actualizar el estado de los botones de herramientas
+            toggleButtonLinea.setSelected(lienzo.getHerramienta() == Lienzo2D.Herramienta.LINEA);
+            toggleButtonRectangulo.setSelected(lienzo.getHerramienta() == Lienzo2D.Herramienta.RECTANGULO);
+            toggleButtonElipse.setSelected(lienzo.getHerramienta() == Lienzo2D.Herramienta.ELIPSE);
+            toggleButtonFantasma.setSelected(lienzo.getHerramienta() == Lienzo2D.Herramienta.FANTASMA);
+
+            // Actualizar el estado de otros atributos
+            toggleButtonRellenar.setSelected(lienzo.isRellenoActivo());
+            toggleButtonAlisar.setSelected(lienzo.isAlisadoActivo());
+            toggleButtonTransparencia.setSelected(lienzo.isTransparenciaActiva());
+            sliderGrosor.setValue(lienzo.getGrosor());
+            buttonColor.setBackground(lienzo.getColor());
+
+            // Actualizar el estado del botón de selección
+            toggleButtonSeleccion.setSelected(lienzo.isMoverActivo());
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -597,16 +701,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaPrincipal().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new VentanaPrincipal().setVisible(true);
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToolBar barHerramientas;
     private javax.swing.JTextField barraEstado;
+    private javax.swing.JToolBar barraHerramientas;
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton buttonAbrir;
     private javax.swing.JButton buttonColor;
@@ -630,10 +732,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel panelCentral;
     private javax.swing.JSlider sliderGrosor;
     private javax.swing.JToggleButton toggleButtonAlisar;
-    private javax.swing.JToggleButton toggleButtonCuadrado;
     private javax.swing.JToggleButton toggleButtonElipse;
     private javax.swing.JToggleButton toggleButtonFantasma;
     private javax.swing.JToggleButton toggleButtonLinea;
+    private javax.swing.JToggleButton toggleButtonRectangulo;
     private javax.swing.JToggleButton toggleButtonRellenar;
     private javax.swing.JToggleButton toggleButtonSeleccion;
     private javax.swing.JToggleButton toggleButtonTransparencia;

@@ -11,6 +11,7 @@ import java.awt.geom.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Lienzo2D extends javax.swing.JPanel {
     private Shape figura = new Line2D.Float();
     private Shape figuraSeleccionada = null;
     private MarcadorSeleccion marcadorSeleccion = null;
-    private List<Shape> vShape = new ArrayList<>();
+    private final List<Shape> vShape = new ArrayList<>();
 
     private Stroke grosor = new BasicStroke();
 
@@ -49,11 +50,15 @@ public class Lienzo2D extends javax.swing.JPanel {
 
     private BufferedImage img = null;
 
+    private final Rectangle areaDibujo;
+    private static final int AREA_SIZE = 700;
+
     /**
      * Constructor de la clase Lienzo2D.
      */
     public Lienzo2D() {
         initComponents();
+        areaDibujo = new Rectangle(-1, -1, AREA_SIZE, AREA_SIZE);
     }
 
     /**
@@ -65,13 +70,22 @@ public class Lienzo2D extends javax.swing.JPanel {
     public void paint(Graphics g) {
         super.paint(g);
 
-        g.setColor(Color.white);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
         Graphics2D g2d = (Graphics2D) g;
 
+        // Dibujar el fondo blanco
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        // Dibujar el rectángulo con bordes discontinuos
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10, new float[]{5, 5}, 0));
+        g2d.drawRect(areaDibujo.x, areaDibujo.y, areaDibujo.width, areaDibujo.height);
+
+        // Establecer el clipping al área de dibujo permitido
+        g2d.setClip(areaDibujo);
+
         if (img != null) {
-            g2d.drawImage(img, 0, 0, this);
+            g2d.drawImage(img, areaDibujo.x + 1, areaDibujo.y + 1, areaDibujo.width - 1, areaDibujo.height - 1, this);
         }
 
         for (Shape s : vShape) {
@@ -81,6 +95,9 @@ public class Lienzo2D extends javax.swing.JPanel {
         if (edicion && marcadorSeleccion != null) {
             marcadorSeleccion.draw(g2d);
         }
+
+        // Restablecer el clipping al área completa del lienzo
+        g2d.setClip(null);
     }
 
     /**
@@ -119,10 +136,23 @@ public class Lienzo2D extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     public void setImage(BufferedImage img) {
+//        this.img = img;
+//        if (img != null) {
+//            setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+//        }
         this.img = img;
         if (img != null) {
+            // Establecer el tamaño preferido del lienzo según el tamaño de la imagen
             setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+
+            // Actualizar el tamaño del área de dibujo según el tamaño de la imagen
+            areaDibujo.setBounds(-1, -1, img.getWidth(), img.getHeight());
+        } else {
+            // Si no hay imagen, establecer el tamaño preferido y el área de dibujo a valores predeterminados
+            setPreferredSize(new Dimension(AREA_SIZE, AREA_SIZE));
+            areaDibujo.setBounds(-1, -1, AREA_SIZE, AREA_SIZE);
         }
+        repaint(); // Volver a pintar el lienzo con el nuevo tamaño
     }
 
     public BufferedImage getImage() {
@@ -241,8 +271,8 @@ public class Lienzo2D extends javax.swing.JPanel {
      *
      * @return El grosor del trazo actual.
      */
-    public Stroke getGrosor() {
-        return grosor;
+    public int getGrosor() {
+        return (int) ((BasicStroke) grosor).getLineWidth();
     }
 
     /**
@@ -281,8 +311,20 @@ public class Lienzo2D extends javax.swing.JPanel {
         return alisadoActivo;
     }
 
+    public boolean isEdicionActivo() {
+        return edicion;
+    }
+
+    public void setEdicionActivo(boolean edicion) {
+        this.edicion = edicion;
+    }
+
     public Shape getFiguraSeleccionada() {
         return figuraSeleccionada;
+    }
+
+    public static int getAREA_SIZE() {
+        return AREA_SIZE;
     }
 
     /**
@@ -336,37 +378,39 @@ public class Lienzo2D extends javax.swing.JPanel {
      * @param evt El evento del mouse.
      */
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
-        this.posicionPressed = evt.getPoint();
+        if (areaDibujo.contains(evt.getPoint())) {
+            this.posicionPressed = evt.getPoint();
 
-        if (edicion) {
-            figura = figuraSeleccionada(evt.getPoint());
-        } else {
-            Shape figuraAux = null;
-            switch (herramienta) {
-                case LINEA:
-                    figuraAux = new MiLinea(posicionPressed, posicionPressed);
-                    break;
-                case RECTANGULO:
-                    figuraAux = new MiRectangulo(posicionPressed, posicionPressed);
-                    break;
-                case ELIPSE:
-                    figuraAux = new MiElipse(posicionPressed, posicionPressed);
-                    break;
-                case FANTASMA:
-                    figuraAux = new MiFantasma(posicionPressed);
-                    break;
-            }
-
-            if (figuraAux != null) {
-                ((AbstractShape) figuraAux).setColor(color);
-                ((AbstractShape) figuraAux).setGrosor(grosor);
-                ((AbstractShape) figuraAux).setTransparenciaActiva(transparenciaActiva);
-                ((AbstractShape) figuraAux).setAlisadoActivo(alisadoActivo);
-                if (figuraAux instanceof AbstractShapeFilled) {
-                    ((AbstractShapeFilled) figuraAux).setRelleno(relleno);
+            if (edicion) {
+                figura = figuraSeleccionada(evt.getPoint());
+            } else {
+                Shape figuraAux = null;
+                switch (herramienta) {
+                    case LINEA:
+                        figuraAux = new MiLinea(posicionPressed, posicionPressed);
+                        break;
+                    case RECTANGULO:
+                        figuraAux = new MiRectangulo(posicionPressed, posicionPressed);
+                        break;
+                    case ELIPSE:
+                        figuraAux = new MiElipse(posicionPressed, posicionPressed);
+                        break;
+                    case FANTASMA:
+                        figuraAux = new MiFantasma(posicionPressed);
+                        break;
                 }
-                this.figura = figuraAux;
-                this.vShape.add(figura);
+
+                if (figuraAux != null) {
+                    ((AbstractShape) figuraAux).setColor(color);
+                    ((AbstractShape) figuraAux).setGrosor(grosor);
+                    ((AbstractShape) figuraAux).setTransparenciaActiva(transparenciaActiva);
+                    ((AbstractShape) figuraAux).setAlisadoActivo(alisadoActivo);
+                    if (figuraAux instanceof AbstractShapeFilled) {
+                        ((AbstractShapeFilled) figuraAux).setRelleno(relleno);
+                    }
+                    this.figura = figuraAux;
+                    this.vShape.add(figura);
+                }
             }
         }
     }//GEN-LAST:event_formMousePressed
@@ -418,8 +462,10 @@ public class Lienzo2D extends javax.swing.JPanel {
      * @param evt El evento del mouse.
      */
     private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
-        this.figura = null;
-        this.repaint();
+        if (areaDibujo.contains(evt.getPoint())) {
+            this.figura = null;
+            this.repaint();
+        }
     }//GEN-LAST:event_formMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
