@@ -9,7 +9,7 @@ public class VentanaInterna extends javax.swing.JInternalFrame {
      */
     public VentanaInterna() {
         initComponents();
-        this.setTitle("Nueva imagen");
+        this.setTitle("Nueva ventana");
         this.setSize(800,800);
     }
 
@@ -26,37 +26,31 @@ public class VentanaInterna extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
         lienzo2D = new sm.sgp.iu.Lienzo2D();
 
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
-        setPreferredSize(new java.awt.Dimension(800, 500));
-
-        lienzo2D.setPreferredSize(new java.awt.Dimension(800, 800));
+        setPreferredSize(new java.awt.Dimension(800, 600));
 
         javax.swing.GroupLayout lienzo2DLayout = new javax.swing.GroupLayout(lienzo2D);
         lienzo2D.setLayout(lienzo2DLayout);
         lienzo2DLayout.setHorizontalGroup(
             lienzo2DLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addGap(0, 388, Short.MAX_VALUE)
         );
         lienzo2DLayout.setVerticalGroup(
             lienzo2DLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addGap(0, 264, Short.MAX_VALUE)
         );
 
-        jScrollPane1.setViewportView(lienzo2D);
-
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(lienzo2D, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
     private sm.sgp.iu.Lienzo2D lienzo2D;
     // End of variables declaration//GEN-END:variables
 }
