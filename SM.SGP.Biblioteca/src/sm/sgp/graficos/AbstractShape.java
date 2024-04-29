@@ -42,6 +42,20 @@ public abstract class AbstractShape implements Shape {
         alisado = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
+    public String getTipoFigura() {
+        if (this instanceof MiLinea) {
+            return "Línea";
+        } else if (this instanceof MiRectangulo) {
+            return "Rectángulo";
+        } else if (this instanceof MiElipse) {
+            return "Elipse";
+        } else if (this instanceof MiFantasma) {
+            return "Fantasma";
+        } else {
+            return "Desconocido";
+        }
+    }
+
     /**
      * Obtiene el color de la forma.
      *

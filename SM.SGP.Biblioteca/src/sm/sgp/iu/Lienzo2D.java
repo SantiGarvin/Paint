@@ -13,8 +13,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.EventObject;
 import sm.sgp.graficos.*;
 
 /**
@@ -52,6 +56,8 @@ public class Lienzo2D extends javax.swing.JPanel {
     private final Rectangle areaDibujo;
     private static final int AREA_SIZE = 700;
 
+    ArrayList<LienzoListener> lienzoEventListeners = new ArrayList();
+
     /**
      * Constructor de la clase Lienzo2D.
      */
@@ -77,8 +83,8 @@ public class Lienzo2D extends javax.swing.JPanel {
         // Dibujar el rectángulo con bordes discontinuos
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10, new float[]{5, 5}, 0));
-        g2d.drawRect(areaDibujo.x, areaDibujo.y, areaDibujo.width, areaDibujo.height);
-        
+        g2d.drawRect(areaDibujo.x-1, areaDibujo.y-1, areaDibujo.width+1, areaDibujo.height+1);
+
         if (img != null) {
             g2d.drawImage(img, areaDibujo.x, areaDibujo.y, areaDibujo.width, areaDibujo.height, this);
         }
@@ -329,6 +335,7 @@ public class Lienzo2D extends javax.swing.JPanel {
             if (s.contains(p)) {
                 figuraSeleccionada = s;
                 marcadorSeleccion = new MarcadorSeleccion(s.getLocation());
+                notifyShapeSelectedEvent(new LienzoEvent(this, s));
                 return s;
             }
         }
@@ -343,8 +350,8 @@ public class Lienzo2D extends javax.swing.JPanel {
             figuraSeleccionada.setGrosor(grosor);
             figuraSeleccionada.setTransparenciaActiva(transparenciaActiva);
             figuraSeleccionada.setAlisadoActivo(alisadoActivo);
-            if (figuraSeleccionada instanceof AbstractShapeFilled) {
-                ((AbstractShapeFilled) figuraSeleccionada).setRelleno(relleno);
+            if (figuraSeleccionada instanceof AbstractShapeFilled abstractShapeFilled) {
+                abstractShapeFilled.setRelleno(relleno);
             }
             this.repaint();
         }
@@ -358,7 +365,122 @@ public class Lienzo2D extends javax.swing.JPanel {
             vAbstractShape.remove(figuraSeleccionada);
             figuraSeleccionada = null;
             marcadorSeleccion = null;
-            repaint();
+            this.repaint();
+        }
+    }
+
+    public void filtroCometa(int tamanoMascara) {
+        BufferedImage imgDest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        float[] mascara = new float[tamanoMascara];
+        float suma = 0;
+
+        for (int i = 0; i < tamanoMascara; i++) {
+            float peso = (float) Math.exp(-i);
+            mascara[i] = peso;
+            suma += peso;
+        }
+
+        for (int i = 0; i < tamanoMascara; i++) {
+            mascara[i] /= suma;
+        }
+
+        Kernel kernel = new Kernel(tamanoMascara, 1, mascara);
+        ConvolveOp convolveOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
+
+        convolveOp.filter(img, imgDest);
+
+        img = imgDest;
+        repaint();
+
+        System.out.println("Aplicando filtro cometa con tamaño de máscara: " + tamanoMascara);
+//        int width = img.getWidth();
+//        int height = img.getHeight();
+//        BufferedImage imgDest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//
+//        float[] mascara = new float[tamanoMascara];
+//        float suma = 0;
+//        for (int i = 0; i < tamanoMascara; i++) {
+//            float peso = (float) (1.0 / (i + 1)); // Peso inversamente proporcional a la distancia
+//            mascara[i] = peso;
+//            suma += peso;
+//        }
+//
+//        // Normalizar la máscara
+//        for (int i = 0; i < tamanoMascara; i++) {
+//            mascara[i] /= suma;
+//        }
+//
+//        // Aplicar la convolución
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                float red = 0, green = 0, blue = 0, alpha = 0;
+//                for (int i = 0; i < tamanoMascara; i++) {
+//                    int px = x + i;
+//                    if (px < width) {
+//                        int rgb = img.getRGB(px, y);
+//                        alpha += ((rgb >> 24) & 0xFF) * mascara[i];
+//                        red += ((rgb >> 16) & 0xFF) * mascara[i];
+//                        green += ((rgb >> 8) & 0xFF) * mascara[i];
+//                        blue += (rgb & 0xFF) * mascara[i];
+//                    }
+//                }
+//                // Asegurar que los valores estén dentro del rango válido (0-255)
+//                alpha = Math.max(0, Math.min(255, alpha));
+//                red = Math.max(0, Math.min(255, red));
+//                green = Math.max(0, Math.min(255, green));
+//                blue = Math.max(0, Math.min(255, blue));
+//
+//                int rgb = (((int) alpha) << 24) | (((int) red) << 16) | (((int) green) << 8) | ((int) blue);
+//                imgDest.setRGB(x, y, rgb);
+//            }
+//        }
+//
+//        img = imgDest;
+//        repaint();
+//        System.out.println("Aplicando filtro cometa con tamaño de máscara: " + tamanoMascara);
+    }
+
+    public class LienzoEvent extends EventObject {
+
+        private final AbstractShape forma;
+
+        public LienzoEvent(Object source, AbstractShape forma) {
+            super(source);
+            this.forma = forma;
+        }
+
+        public AbstractShape getForma() {
+            return forma;
+        }
+    }
+
+    public interface LienzoListener extends EventListener {
+
+        public void shapeAdded(LienzoEvent evt);
+
+        public void shapeSelected(LienzoEvent evt);
+    }
+
+    public void addLienzoListener(LienzoListener listener) {
+        if (listener != null) {
+            lienzoEventListeners.add(listener);
+        }
+    }
+
+    private void notifyShapeAddedEvent(LienzoEvent evt) {
+        if (!lienzoEventListeners.isEmpty()) {
+            for (LienzoListener listener : lienzoEventListeners) {
+                listener.shapeAdded(evt);
+            }
+        }
+    }
+
+    private void notifyShapeSelectedEvent(LienzoEvent evt) {
+        if (!lienzoEventListeners.isEmpty()) {
+            for (LienzoListener listener : lienzoEventListeners) {
+                listener.shapeSelected(evt);
+            }
         }
     }
 
@@ -395,11 +517,12 @@ public class Lienzo2D extends javax.swing.JPanel {
                     figuraAux.setGrosor(grosor);
                     figuraAux.setTransparenciaActiva(transparenciaActiva);
                     figuraAux.setAlisadoActivo(alisadoActivo);
-                    if (figuraAux instanceof AbstractShapeFilled) {
-                        ((AbstractShapeFilled) figuraAux).setRelleno(relleno);
+                    if (figuraAux instanceof AbstractShapeFilled abstractShapeFilled) {
+                        abstractShapeFilled.setRelleno(relleno);
                     }
                     this.figura = figuraAux;
                     this.vAbstractShape.add(figura);
+                    notifyShapeAddedEvent(new LienzoEvent(this, figura));
                 }
             }
         }
@@ -416,14 +539,17 @@ public class Lienzo2D extends javax.swing.JPanel {
         if (figura != null) {
 
             if (edicion) {
-                if (figura instanceof MiLinea) {
-                    ((MiLinea) figura).setLocation(posicionDragged);
-                } else if (figura instanceof MiRectangulo) {
-                    ((MiRectangulo) figura).setLocation(posicionDragged);
-                } else if (figura instanceof MiElipse) {
-                    ((MiElipse) figura).setLocation(posicionDragged);
-                } else if (figura instanceof MiFantasma) {
-                    ((MiFantasma) figura).setLocation(posicionDragged);
+                switch (figura) {
+                    case MiLinea miLinea ->
+                        miLinea.setLocation(posicionDragged);
+                    case MiRectangulo miRectangulo ->
+                        miRectangulo.setLocation(posicionDragged);
+                    case MiElipse miElipse ->
+                        miElipse.setLocation(posicionDragged);
+                    case MiFantasma miFantasma ->
+                        miFantasma.setLocation(posicionDragged);
+                    default -> {
+                    }
                 }
                 if (marcadorSeleccion != null) {
                     marcadorSeleccion.setLocation(figura.getLocation());

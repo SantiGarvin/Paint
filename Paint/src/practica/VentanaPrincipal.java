@@ -13,16 +13,20 @@ import java.awt.image.WritableRaster;
 import javax.swing.JFileChooser;
 import javax.swing.JColorChooser;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import sm.image.KernelProducer;
+import sm.sgp.graficos.AbstractShape;
+import sm.sgp.iu.Lienzo2D.LienzoEvent;
+import sm.sgp.iu.Lienzo2D.LienzoListener;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     private BufferedImage imgFuente;
+    MiManejadorLienzo manejador = new MiManejadorLienzo();
 
     public VentanaPrincipal() {
         initComponents();
@@ -412,7 +416,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(sliderContraste);
         barraImagenes.add(jSeparator4);
 
-        seleccionMascara.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Media", "Binomial", "Enfoque", "Relieve", "Laplaciano" }));
+        seleccionMascara.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Media", "Binomial", "Enfoque", "Relieve", "Laplaciano", "EI3X3", "EI5X5" }));
         seleccionMascara.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seleccionMascaraActionPerformed(evt);
@@ -423,9 +427,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cometa.png"))); // NOI18N
         barraImagenes.add(jLabel3);
 
-        sliderCometa.setMaximum(20);
+        sliderCometa.setMaximum(10);
         sliderCometa.setValue(0);
         sliderCometa.setPreferredSize(new java.awt.Dimension(50, 20));
+        sliderCometa.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderCometaStateChanged(evt);
+            }
+        });
         barraImagenes.add(sliderCometa);
         barraImagenes.add(jSeparator5);
 
@@ -550,8 +559,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
         VentanaInterna vi = new VentanaInterna();
-        JScrollPane scrollPane = new JScrollPane(vi.getLienzo2D());
-        vi.add(scrollPane);
+
         escritorio.add(vi);
         vi.setVisible(true);
 
@@ -574,10 +582,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         Lienzo2D lienzo = vi.getLienzo2D();
         updateDefault(lienzo);
+
+        lienzo.addLienzoListener(manejador);
     }//GEN-LAST:event_menuItemNuevoActionPerformed
 
     private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
-        JFileChooser dlg = new JFileChooser("/home/santi/Escritorio/SMM/img_prueba");
+       JFileChooser dlg = new JFileChooser("/home/santi/Escritorio/SMM/img_prueba");
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (*.png, *.jpg, *.jpeg, *.gif, *.bmp)", "png", "jpg", "jpeg", "gif", "bmp");
         dlg.addChoosableFileFilter(filter);
@@ -592,8 +602,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 BufferedImage img = ImageIO.read(f);
                 VentanaInterna vi = new VentanaInterna();
                 vi.getLienzo2D().setImage(img);
-                JScrollPane scrollPane = new JScrollPane(vi.getLienzo2D());
-                vi.add(scrollPane);
                 this.escritorio.add(vi);
                 String extension = getFileExtension(f.getName());
                 vi.setTitle(f.getName() + " (" + extension.toUpperCase() + ")");
@@ -601,7 +609,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 vi.addInternalFrameListener(new ManejadorVentanaInterna());
 
                 vi.setVisible(true);
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 System.err.println("Error al leer la imagen: " + ex.getMessage());
             }
         }
@@ -646,7 +654,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                             g2d.dispose();
                             ImageIO.write(convertedImage, selectedFormat, file);
                             vi.setTitle(file.getName());
-                        } catch (Exception ex) {
+                        } catch (IOException ex) {
                             System.err.println("Error al guardar la imagen: " + ex.getMessage());
                         }
                     }
@@ -767,7 +775,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
                 try {
-                    RescaleOp rop = new RescaleOp(1.0F, 100.0F, null);
+                    RescaleOp rop = new RescaleOp(1.0f, 100.0f, null);
                     rop.filter(img, img);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
@@ -896,6 +904,31 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_sliderContrasteStateChanged
 
+    private void sliderCometaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderCometaStateChanged
+//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+//        if (vi != null) {
+//            BufferedImage img = vi.getLienzo2D().getImage();
+//            if (img != null) {
+//                int tamanoMascara = sliderCometa.getValue();
+//                vi.getLienzo2D().filtroCometa(tamanoMascara);
+//            }
+//        }
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                int tamanoMascara = sliderCometa.getValue();
+                BufferedImage imgCopia = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = imgCopia.createGraphics();
+                g2d.drawImage(img, 0, 0, null);
+                g2d.dispose();
+
+                vi.getLienzo2D().setImage(imgCopia);
+                vi.getLienzo2D().filtroCometa(tamanoMascara);
+            }
+        }
+    }//GEN-LAST:event_sliderCometaStateChanged
+
     private Kernel getKernel(int seleccion) {
         Kernel k = null;
 
@@ -915,10 +948,54 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             case 4:
                 k = KernelProducer.createKernel(KernelProducer.TYPE_LAPLACIANA_3x3);
                 break;
+            case 5:
+                k = createKernelEI3x3();
+                break;
+            case 6:
+                k = createKernelEI5x5();
+                break;
             default:
                 throw new AssertionError();
         }
         return k;
+    }
+
+    /**
+     * Crea un kernel para aplicar un emborronamiento iluminado con una máscara
+     * 3x3. La máscara de 2/9 en una matriz 3x3 emborrona la imagen a la vez que
+     * le incrementa la luminosidad porque la suma de los valores de la máscara
+     * es mayor a 1. Esto hace que cada píxel resultante sea una combinación
+     * ponderada de los píxeles vecinos, pero con un factor de escala mayor a 1,
+     * lo que resulta en un aumento de la luminosidad general de la imagen.
+     *
+     * @return el kernel para aplicar el emborronamiento iluminado 3x3
+     */
+    private Kernel createKernelEI3x3() {
+        float[] data = {
+            2f / 9f, 2f / 9f, 2f / 9f,
+            2f / 9f, 2f / 9f, 2f / 9f,
+            2f / 9f, 2f / 9f, 2f / 9f
+        };
+        return new Kernel(3, 3, data);
+    }
+
+    /**
+     * Crea un kernel para aplicar un emborronamiento iluminado con una máscara
+     * 5x5. Los valores de la máscara 5x5 se han ajustado para que la suma sea
+     * mayor a 1, lo que resulta en un emborronamiento iluminado similar al de
+     * la máscara 3x3.
+     *
+     * @return el kernel para aplicar el emborronamiento iluminado 5x5
+     */
+    private Kernel createKernelEI5x5() {
+        float[] data = {
+            1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f,
+            1f / 25f, 2f / 25f, 2f / 25f, 2f / 25f, 1f / 25f,
+            1f / 25f, 2f / 25f, 3f / 25f, 2f / 25f, 1f / 25f,
+            1f / 25f, 2f / 25f, 2f / 25f, 2f / 25f, 1f / 25f,
+            1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f
+        };
+        return new Kernel(5, 5, data);
     }
 
     private class ManejadorVentanaInterna extends InternalFrameAdapter {
@@ -943,6 +1020,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
             // Actualizar el estado del botón de selección
             toggleButtonSeleccion.setSelected(lienzo.isMoverActivo());
+        }
+    }
+
+    public class MiManejadorLienzo implements LienzoListener {
+
+        @Override
+        public void shapeAdded(LienzoEvent evt) {
+            AbstractShape abstractShape = evt.getForma();
+            String tipoFigura = abstractShape.getTipoFigura();
+            barraEstado.setText("Figura añadida: " + tipoFigura);
+        }
+
+        @Override
+        public void shapeSelected(LienzoEvent evt) {
+            AbstractShape abstractShape = evt.getForma();
+            String tipoFigura = abstractShape.getTipoFigura();
+            barraEstado.setText("Figura seleccionada: " + tipoFigura);
         }
     }
 
