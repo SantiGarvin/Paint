@@ -13,8 +13,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -51,7 +49,7 @@ public class Lienzo2D extends javax.swing.JPanel {
     private boolean transparenciaActiva = false;
     private boolean alisadoActivo = false;
 
-    private BufferedImage img = null;
+    private BufferedImage imgFuente = null;
 
     private final Rectangle areaDibujo;
     private static final int AREA_SIZE = 700;
@@ -83,10 +81,10 @@ public class Lienzo2D extends javax.swing.JPanel {
         // Dibujar el rectángulo con bordes discontinuos
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10, new float[]{5, 5}, 0));
-        g2d.drawRect(areaDibujo.x-1, areaDibujo.y-1, areaDibujo.width+1, areaDibujo.height+1);
+        g2d.drawRect(areaDibujo.x - 1, areaDibujo.y - 1, areaDibujo.width + 1, areaDibujo.height + 1);
 
-        if (img != null) {
-            g2d.drawImage(img, areaDibujo.x, areaDibujo.y, areaDibujo.width, areaDibujo.height, this);
+        if (imgFuente != null) {
+            g2d.drawImage(imgFuente, areaDibujo.x, areaDibujo.y, areaDibujo.width, areaDibujo.height, this);
         }
 
         for (AbstractShape s : vAbstractShape) {
@@ -133,40 +131,6 @@ public class Lienzo2D extends javax.swing.JPanel {
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    public void setImage(BufferedImage img) {
-        this.img = img;
-        if (img != null) {
-            // Establecer el tamaño preferido del lienzo con un margen de 200 píxeles
-            setPreferredSize(new Dimension(img.getWidth() + 200, img.getHeight() + 200));
-
-            // Actualizar el tamaño y la posición del área de dibujo
-            areaDibujo.setBounds(0, 0, img.getWidth(), img.getHeight());
-        } else {
-            // Si no hay imagen, establecer el tamaño preferido y el área de dibujo a valores predeterminados
-            setPreferredSize(new Dimension(AREA_SIZE + 200, AREA_SIZE + 200));
-            areaDibujo.setBounds(0, 0, AREA_SIZE, AREA_SIZE);
-        }
-        repaint(); // Volver a pintar el lienzo con el nuevo tamaño
-    }
-
-    public BufferedImage getImage() {
-        return img;
-    }
-
-    public BufferedImage getPaintedImage() {
-        BufferedImage imgout = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2dImagen = imgout.createGraphics();
-        if (img != null) {
-            g2dImagen.drawImage(img, 0, 0, this);
-        }
-        for (AbstractShape s : vAbstractShape) {
-            s.draw(g2dImagen);
-        }
-        g2dImagen.dispose();
-
-        return imgout;
-    }
 
     /**
      * Verifica si la funcionalidad de mover está activa.
@@ -323,6 +287,48 @@ public class Lienzo2D extends javax.swing.JPanel {
         return AREA_SIZE;
     }
 
+    public void setImage(BufferedImage img) {
+        this.imgFuente = img;
+        if (img != null) {
+            // Establecer el tamaño preferido del lienzo con un margen de 200 píxeles
+            setPreferredSize(new Dimension(img.getWidth() + 200, img.getHeight() + 200));
+
+            // Actualizar el tamaño y la posición del área de dibujo
+            areaDibujo.setBounds(0, 0, img.getWidth(), img.getHeight());
+        } else {
+            // Si no hay imagen, establecer el tamaño preferido y el área de dibujo a valores predeterminados
+            setPreferredSize(new Dimension(AREA_SIZE + 200, AREA_SIZE + 200));
+            areaDibujo.setBounds(0, 0, AREA_SIZE, AREA_SIZE);
+        }
+        repaint(); // Volver a pintar el lienzo con el nuevo tamaño
+    }
+
+    public BufferedImage getImage() {
+        return imgFuente;
+    }
+
+    public BufferedImage getPaintedImage() {
+        BufferedImage imgout = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2dImagen = imgout.createGraphics();
+        if (imgFuente != null) {
+            g2dImagen.drawImage(imgFuente, 0, 0, this);
+        }
+        for (AbstractShape s : vAbstractShape) {
+            s.draw(g2dImagen);
+        }
+        g2dImagen.dispose();
+
+        return imgout;
+    }
+
+    private BufferedImage clonarImagen(BufferedImage img) {
+        BufferedImage copia = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = copia.createGraphics();
+        g2d.drawImage(img, 0, 0, null);
+        g2d.dispose();
+        return copia;
+    }
+
     /**
      * Método que busca la figura seleccionada en una posición dada.
      *
@@ -359,7 +365,7 @@ public class Lienzo2D extends javax.swing.JPanel {
 
     public void volcarFiguraSeleccionada() {
         if (figuraSeleccionada != null) {
-            Graphics2D g2d = img.createGraphics();
+            Graphics2D g2d = imgFuente.createGraphics();
             figuraSeleccionada.draw(g2d);
             g2d.dispose();
             vAbstractShape.remove(figuraSeleccionada);
@@ -367,78 +373,6 @@ public class Lienzo2D extends javax.swing.JPanel {
             marcadorSeleccion = null;
             this.repaint();
         }
-    }
-
-    public void filtroCometa(int tamanoMascara) {
-        BufferedImage imgDest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        float[] mascara = new float[tamanoMascara];
-        float suma = 0;
-
-        for (int i = 0; i < tamanoMascara; i++) {
-            float peso = (float) Math.exp(-i);
-            mascara[i] = peso;
-            suma += peso;
-        }
-
-        for (int i = 0; i < tamanoMascara; i++) {
-            mascara[i] /= suma;
-        }
-
-        Kernel kernel = new Kernel(tamanoMascara, 1, mascara);
-        ConvolveOp convolveOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
-
-        convolveOp.filter(img, imgDest);
-
-        img = imgDest;
-        repaint();
-
-        System.out.println("Aplicando filtro cometa con tamaño de máscara: " + tamanoMascara);
-//        int width = img.getWidth();
-//        int height = img.getHeight();
-//        BufferedImage imgDest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//
-//        float[] mascara = new float[tamanoMascara];
-//        float suma = 0;
-//        for (int i = 0; i < tamanoMascara; i++) {
-//            float peso = (float) (1.0 / (i + 1)); // Peso inversamente proporcional a la distancia
-//            mascara[i] = peso;
-//            suma += peso;
-//        }
-//
-//        // Normalizar la máscara
-//        for (int i = 0; i < tamanoMascara; i++) {
-//            mascara[i] /= suma;
-//        }
-//
-//        // Aplicar la convolución
-//        for (int y = 0; y < height; y++) {
-//            for (int x = 0; x < width; x++) {
-//                float red = 0, green = 0, blue = 0, alpha = 0;
-//                for (int i = 0; i < tamanoMascara; i++) {
-//                    int px = x + i;
-//                    if (px < width) {
-//                        int rgb = img.getRGB(px, y);
-//                        alpha += ((rgb >> 24) & 0xFF) * mascara[i];
-//                        red += ((rgb >> 16) & 0xFF) * mascara[i];
-//                        green += ((rgb >> 8) & 0xFF) * mascara[i];
-//                        blue += (rgb & 0xFF) * mascara[i];
-//                    }
-//                }
-//                // Asegurar que los valores estén dentro del rango válido (0-255)
-//                alpha = Math.max(0, Math.min(255, alpha));
-//                red = Math.max(0, Math.min(255, red));
-//                green = Math.max(0, Math.min(255, green));
-//                blue = Math.max(0, Math.min(255, blue));
-//
-//                int rgb = (((int) alpha) << 24) | (((int) red) << 16) | (((int) green) << 8) | ((int) blue);
-//                imgDest.setRGB(x, y, rgb);
-//            }
-//        }
-//
-//        img = imgDest;
-//        repaint();
-//        System.out.println("Aplicando filtro cometa con tamaño de máscara: " + tamanoMascara);
     }
 
     public class LienzoEvent extends EventObject {

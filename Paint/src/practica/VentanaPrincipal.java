@@ -4,16 +4,22 @@ import sm.sgp.iu.Lienzo2D;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ByteLookupTable;
 import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.LookupOp;
+import java.awt.image.LookupTable;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import javax.swing.JFileChooser;
 import javax.swing.JColorChooser;
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Math.pow;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.event.InternalFrameAdapter;
@@ -22,6 +28,8 @@ import sm.image.KernelProducer;
 import sm.sgp.graficos.AbstractShape;
 import sm.sgp.iu.Lienzo2D.LienzoEvent;
 import sm.sgp.iu.Lienzo2D.LienzoListener;
+import sm.image.ImageTools;
+import sm.image.LookupTableProducer;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
@@ -80,16 +88,28 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         sliderCometa = new javax.swing.JSlider();
         jSeparator5 = new javax.swing.JToolBar.Separator();
+        buttonContraste = new javax.swing.JButton();
+        buttonOscurecer = new javax.swing.JButton();
+        buttonIluminar = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        labelTransformLineal = new javax.swing.JLabel();
+        sliderRotacion = new javax.swing.JSlider();
+        jSeparator6 = new javax.swing.JToolBar.Separator();
+        rotar180Button = new javax.swing.JButton();
+        ampliarButton = new javax.swing.JButton();
+        reducirButton = new javax.swing.JButton();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
-        menuItemNuevo = new javax.swing.JMenuItem();
-        menuItemAbrir = new javax.swing.JMenuItem();
-        menuItemGuardar = new javax.swing.JMenuItem();
+        menuNuevo = new javax.swing.JMenuItem();
+        menuAbrir = new javax.swing.JMenuItem();
+        menuGuardar = new javax.swing.JMenuItem();
         menuImagen = new javax.swing.JMenu();
         menuRescaleOp = new javax.swing.JMenuItem();
         menuConvolveOp = new javax.swing.JMenuItem();
+        menuAffineTransform = new javax.swing.JMenuItem();
+        menuLookupOp = new javax.swing.JMenuItem();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -360,7 +380,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         escritorio.setLayout(escritorioLayout);
         escritorioLayout.setHorizontalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 668, Short.MAX_VALUE)
+            .addGap(0, 812, Short.MAX_VALUE)
         );
         escritorioLayout.setVerticalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -427,7 +447,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cometa.png"))); // NOI18N
         barraImagenes.add(jLabel3);
 
-        sliderCometa.setMaximum(10);
+        sliderCometa.setMaximum(150);
         sliderCometa.setValue(0);
         sliderCometa.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderCometa.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -435,8 +455,118 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 sliderCometaStateChanged(evt);
             }
         });
+        sliderCometa.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sliderCometaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sliderCometaFocusLost(evt);
+            }
+        });
         barraImagenes.add(sliderCometa);
         barraImagenes.add(jSeparator5);
+
+        buttonContraste.setBackground(new java.awt.Color(242, 242, 242));
+        buttonContraste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/contraste2.png"))); // NOI18N
+        buttonContraste.setFocusable(false);
+        buttonContraste.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonContraste.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonContraste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonContrasteActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonContraste);
+
+        buttonOscurecer.setBackground(new java.awt.Color(242, 242, 242));
+        buttonOscurecer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/ocurecer.png"))); // NOI18N
+        buttonOscurecer.setFocusable(false);
+        buttonOscurecer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonOscurecer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonOscurecer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonOscurecerActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonOscurecer);
+
+        buttonIluminar.setBackground(new java.awt.Color(242, 242, 242));
+        buttonIluminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iluminar.png"))); // NOI18N
+        buttonIluminar.setFocusable(false);
+        buttonIluminar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonIluminar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonIluminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonIluminarActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonIluminar);
+
+        jButton4.setBackground(new java.awt.Color(242, 242, 242));
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador1.png"))); // NOI18N
+        jButton4.setFocusable(false);
+        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barraImagenes.add(jButton4);
+
+        labelTransformLineal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador2.png"))); // NOI18N
+        barraImagenes.add(labelTransformLineal);
+
+        sliderRotacion.setMaximum(360);
+        sliderRotacion.setMinimum(-360);
+        sliderRotacion.setValue(0);
+        sliderRotacion.setPreferredSize(new java.awt.Dimension(50, 20));
+        sliderRotacion.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderRotacionStateChanged(evt);
+            }
+        });
+        sliderRotacion.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sliderRotacionFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sliderRotacionFocusLost(evt);
+            }
+        });
+        barraImagenes.add(sliderRotacion);
+        barraImagenes.add(jSeparator6);
+
+        rotar180Button.setBackground(new java.awt.Color(242, 242, 242));
+        rotar180Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rotar180.png"))); // NOI18N
+        rotar180Button.setFocusable(false);
+        rotar180Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        rotar180Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        rotar180Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rotar180ButtonActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(rotar180Button);
+
+        ampliarButton.setBackground(new java.awt.Color(242, 242, 242));
+        ampliarButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/mas.png"))); // NOI18N
+        ampliarButton.setFocusable(false);
+        ampliarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ampliarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        ampliarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ampliarButtonActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(ampliarButton);
+
+        reducirButton.setBackground(new java.awt.Color(242, 242, 242));
+        reducirButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/menos.png"))); // NOI18N
+        reducirButton.setFocusable(false);
+        reducirButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        reducirButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        reducirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reducirButtonActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(reducirButton);
 
         panelCentral.add(barraImagenes, java.awt.BorderLayout.PAGE_END);
 
@@ -453,29 +583,29 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         menuArchivo.setText("Archivo");
 
-        menuItemNuevo.setText("Nuevo");
-        menuItemNuevo.addActionListener(new java.awt.event.ActionListener() {
+        menuNuevo.setText("Nuevo");
+        menuNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemNuevoActionPerformed(evt);
+                menuNuevoActionPerformed(evt);
             }
         });
-        menuArchivo.add(menuItemNuevo);
+        menuArchivo.add(menuNuevo);
 
-        menuItemAbrir.setText("Abrir");
-        menuItemAbrir.addActionListener(new java.awt.event.ActionListener() {
+        menuAbrir.setText("Abrir");
+        menuAbrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemAbrirActionPerformed(evt);
+                menuAbrirActionPerformed(evt);
             }
         });
-        menuArchivo.add(menuItemAbrir);
+        menuArchivo.add(menuAbrir);
 
-        menuItemGuardar.setText("Guardar");
-        menuItemGuardar.addActionListener(new java.awt.event.ActionListener() {
+        menuGuardar.setText("Guardar");
+        menuGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemGuardarActionPerformed(evt);
+                menuGuardarActionPerformed(evt);
             }
         });
-        menuArchivo.add(menuItemGuardar);
+        menuArchivo.add(menuGuardar);
 
         barraMenu.add(menuArchivo);
 
@@ -496,6 +626,22 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         menuImagen.add(menuConvolveOp);
+
+        menuAffineTransform.setText("AffineTransformOp");
+        menuAffineTransform.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAffineTransformActionPerformed(evt);
+            }
+        });
+        menuImagen.add(menuAffineTransform);
+
+        menuLookupOp.setText("LookupOp");
+        menuLookupOp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLookupOpActionPerformed(evt);
+            }
+        });
+        menuImagen.add(menuLookupOp);
 
         barraMenu.add(menuImagen);
 
@@ -557,7 +703,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         toggleButtonSeleccion.setSelected(false);
     }
 
-    private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
+    private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
         VentanaInterna vi = new VentanaInterna();
 
         escritorio.add(vi);
@@ -584,10 +730,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         updateDefault(lienzo);
 
         lienzo.addLienzoListener(manejador);
-    }//GEN-LAST:event_menuItemNuevoActionPerformed
+    }//GEN-LAST:event_menuNuevoActionPerformed
 
-    private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
-       JFileChooser dlg = new JFileChooser("/home/santi/Escritorio/SMM/img_prueba");
+    private void menuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAbrirActionPerformed
+        JFileChooser dlg = new JFileChooser("/home/santi/Escritorio/SMM/img_prueba");
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (*.png, *.jpg, *.jpeg, *.gif, *.bmp)", "png", "jpg", "jpeg", "gif", "bmp");
         dlg.addChoosableFileFilter(filter);
@@ -613,7 +759,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 System.err.println("Error al leer la imagen: " + ex.getMessage());
             }
         }
-    }//GEN-LAST:event_menuItemAbrirActionPerformed
+    }//GEN-LAST:event_menuAbrirActionPerformed
 
     private String getFileExtension(String fileName) {
         String extension = "";
@@ -624,7 +770,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         return extension;
     }
 
-    private void menuItemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarActionPerformed
+    private void menuGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuGuardarActionPerformed
         VentanaInterna vi = (VentanaInterna) escritorio.getSelectedFrame();
         if (vi != null) {
             BufferedImage imgModificada = vi.getLienzo2D().getPaintedImage();
@@ -661,7 +807,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_menuItemGuardarActionPerformed
+    }//GEN-LAST:event_menuGuardarActionPerformed
 
     private void buttonColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonColorActionPerformed
         Color colorSeleccionado = JColorChooser.showDialog(this, "Seleccionar color", null);
@@ -751,15 +897,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_barraHerramientasMouseExited
 
     private void buttonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNuevoActionPerformed
-        menuItemNuevoActionPerformed(evt);
+        menuNuevoActionPerformed(evt);
     }//GEN-LAST:event_buttonNuevoActionPerformed
 
     private void buttonAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAbrirActionPerformed
-        menuItemAbrirActionPerformed(evt);
+        menuAbrirActionPerformed(evt);
     }//GEN-LAST:event_buttonAbrirActionPerformed
 
     private void buttonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGuardarActionPerformed
-        menuItemGuardarActionPerformed(evt);
+        menuGuardarActionPerformed(evt);
     }//GEN-LAST:event_buttonGuardarActionPerformed
 
     private void buttonVolcadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonVolcadoActionPerformed
@@ -824,7 +970,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 try {
                     int brillo = sliderBrillo.getValue();
                     RescaleOp rop = new RescaleOp(1.0f, brillo, null);
-                    rop.filter(imgFuente, vi.getLienzo2D().getImage());
+                    rop.filter(imgFuente, img);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
@@ -839,8 +985,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             vi.getLienzo2D().setImage(imgFuente);
             vi.getLienzo2D().repaint();
         }
-
-        imgFuente = null;
         sliderBrillo.setValue(0);
     }//GEN-LAST:event_sliderBrilloFocusLost
 
@@ -882,8 +1026,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             vi.getLienzo2D().setImage(imgFuente);
             vi.getLienzo2D().repaint();
         }
-
-        imgFuente = null;
         sliderContraste.setValue(0);
     }//GEN-LAST:event_sliderContrasteFocusLost
 
@@ -904,30 +1046,279 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_sliderContrasteStateChanged
 
+    public void filtroCometa(BufferedImage imgDest, int tamanoMascara) {
+        if (imgDest == null) {
+            return;
+        }
+
+        float[] mascara = new float[tamanoMascara];
+        float suma = 0;
+
+        for (int i = 0; i < tamanoMascara / 2; i++) {
+            mascara[i] = 0;
+        }
+
+        for (int i = (tamanoMascara / 2); i < tamanoMascara; i++) {
+            float peso = (float) (1.0f / pow(i + 1, 2));
+            mascara[i] = peso;
+            suma += peso;
+        }
+
+        System.out.print("[ ");
+        for (int i = 0; i < tamanoMascara; i++) {
+            if (mascara[i] > 0) {
+                mascara[i] /= suma;
+            }
+            System.out.print(mascara[i] + " ");
+
+            if (i % 5 == 0) {
+                System.out.println("");
+            }
+        }
+
+        float sumaNormalizada = 0;
+        for (int i = 0; i < tamanoMascara; i++) {
+            sumaNormalizada += mascara[i];
+        }
+
+        System.out.print("]\n Suma: " + sumaNormalizada + "\n");
+
+        Kernel kernel = new Kernel(tamanoMascara, 1, mascara);
+        ConvolveOp convolveOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
+        convolveOp.filter(imgFuente, imgDest);
+    }
+
     private void sliderCometaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderCometaStateChanged
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            try {
+                BufferedImage img = vi.getLienzo2D().getImage();
+                int tamanoMascara = sliderCometa.getValue();
+
+                filtroCometa(img, tamanoMascara);
+                vi.getLienzo2D().repaint();
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getLocalizedMessage());
+            }
+        }
+    }//GEN-LAST:event_sliderCometaStateChanged
+
+    private void sliderCometaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderCometaFocusGained
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            ColorModel cm = vi.getLienzo2D().getImage().getColorModel();
+            WritableRaster raster = vi.getLienzo2D().getImage().copyData(null);
+            boolean alfaPre = vi.getLienzo2D().getImage().isAlphaPremultiplied();
+            imgFuente = new BufferedImage(cm, raster, alfaPre, null);
+        }
+    }//GEN-LAST:event_sliderCometaFocusGained
+
+    private void sliderCometaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderCometaFocusLost
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            vi.getLienzo2D().setImage(imgFuente);
+            vi.getLienzo2D().repaint();
+        }
+        sliderCometa.setValue(0);
+    }//GEN-LAST:event_sliderCometaFocusLost
+
+    private void menuAffineTransformActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAffineTransformActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    AffineTransform at = AffineTransform.getScaleInstance(1.5, 1.5);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuAffineTransformActionPerformed
+
+    private void menuLookupOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLookupOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    byte funcionT[] = new byte[256];
+                    for (int x = 0; x < 256; x++) {
+                        funcionT[x] = (byte) (255 - x); // Negativo
+                    }
+                    LookupTable tabla = new ByteLookupTable(0, funcionT);
+                    LookupOp lop = new LookupOp(tabla, null);
+
+                    BufferedImage imgdest = lop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuLookupOpActionPerformed
+
+    private void aplicarLookup(LookupTable tabla) {
 //        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
 //        if (vi != null) {
 //            BufferedImage img = vi.getLienzo2D().getImage();
+////            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
 //            if (img != null) {
-//                int tamanoMascara = sliderCometa.getValue();
-//                vi.getLienzo2D().filtroCometa(tamanoMascara);
+//                try {
+//                    LookupOp lop = new LookupOp(tabla, null);
+//                    lop.filter(img, img);
+//                    vi.getLienzo2D().repaint();
+//                } catch (IllegalArgumentException e) {
+//                    System.err.println(e.getLocalizedMessage());
+//                }
 //            }
 //        }
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
-                int tamanoMascara = sliderCometa.getValue();
-                BufferedImage imgCopia = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2d = imgCopia.createGraphics();
-                g2d.drawImage(img, 0, 0, null);
-                g2d.dispose();
-
-                vi.getLienzo2D().setImage(imgCopia);
-                vi.getLienzo2D().filtroCometa(tamanoMascara);
+                try {
+//                    BufferedImage imgdest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    LookupOp lop = new LookupOp(tabla, null);
+                    lop.filter(img, img);
+//                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
             }
         }
-    }//GEN-LAST:event_sliderCometaStateChanged
+    }
+
+    private void buttonContrasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonContrasteActionPerformed
+        LookupTable tabla = LookupTableProducer.createLookupTable(LookupTableProducer.TYPE_SFUNCION);
+
+        aplicarLookup(tabla);
+    }//GEN-LAST:event_buttonContrasteActionPerformed
+
+    private void buttonOscurecerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOscurecerActionPerformed
+//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+//        if (vi != null) {
+//            BufferedImage img = vi.getLienzo2D().getImage();
+//            if (img != null) {
+//                try {
+//                    LookupTable lt = LookupTableProducer.powerFuction(LookupTableProducer.DEFAULT_POWER);
+//                    LookupOp lop = new LookupOp(lt, null);
+//                    lop.filter(img, img);
+//                    vi.getLienzo2D().repaint();
+//                } catch (Exception e) {
+//                    System.err.println(e.getLocalizedMessage());
+//                }
+//            }
+//        }
+        LookupTable tabla = LookupTableProducer.powerFuction(LookupTableProducer.DEFAULT_POWER);
+
+        aplicarLookup(tabla);
+    }//GEN-LAST:event_buttonOscurecerActionPerformed
+
+    private void buttonIluminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonIluminarActionPerformed
+        LookupTable tabla = LookupTableProducer.rootFuction(LookupTableProducer.DEFAULT_ROOT);
+
+        aplicarLookup(tabla);
+    }//GEN-LAST:event_buttonIluminarActionPerformed
+
+    private void rotar180ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotar180ButtonActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(180), img.getWidth() / 2, img.getHeight() / 2);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_rotar180ButtonActionPerformed
+
+    private void sliderRotacionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderRotacionStateChanged
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            if (imgFuente != null) {
+                try {
+                    double radians = Math.toRadians(this.sliderRotacion.getValue());
+                    AffineTransform at = AffineTransform.getRotateInstance(radians, imgFuente.getWidth() / 2, imgFuente.getHeight() / 2);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(imgFuente, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_sliderRotacionStateChanged
+
+    private void sliderRotacionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderRotacionFocusGained
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            this.imgFuente = vi.getLienzo2D().getImage();
+        }
+    }//GEN-LAST:event_sliderRotacionFocusGained
+
+    private void sliderRotacionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderRotacionFocusLost
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            vi.getLienzo2D().setImage(imgFuente);
+            vi.getLienzo2D().repaint();
+        }
+        this.sliderRotacion.setValue(0);
+    }//GEN-LAST:event_sliderRotacionFocusLost
+
+    private void ampliarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ampliarButtonActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    AffineTransform at = AffineTransform.getScaleInstance(1.3, 1.3);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_ampliarButtonActionPerformed
+
+    private void reducirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reducirButtonActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    AffineTransform at = AffineTransform.getScaleInstance(0.7, 0.7);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_reducirButtonActionPerformed
 
     private Kernel getKernel(int seleccion) {
         Kernel k = null;
@@ -1074,18 +1465,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ampliarButton;
     private javax.swing.JTextField barraEstado;
     private javax.swing.JToolBar barraHerramientas;
     private javax.swing.JToolBar barraImagenes;
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton buttonAbrir;
     private javax.swing.JButton buttonColor;
+    private javax.swing.JButton buttonContraste;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton buttonGuardar;
+    private javax.swing.JButton buttonIluminar;
     private javax.swing.JButton buttonNuevo;
+    private javax.swing.JButton buttonOscurecer;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1098,20 +1494,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
+    private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JLabel labelTransformLineal;
+    private javax.swing.JMenuItem menuAbrir;
+    private javax.swing.JMenuItem menuAffineTransform;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuItem menuConvolveOp;
+    private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenu menuImagen;
-    private javax.swing.JMenuItem menuItemAbrir;
-    private javax.swing.JMenuItem menuItemGuardar;
-    private javax.swing.JMenuItem menuItemNuevo;
+    private javax.swing.JMenuItem menuLookupOp;
+    private javax.swing.JMenuItem menuNuevo;
     private javax.swing.JMenuItem menuRescaleOp;
     private javax.swing.JPanel panelBarraEstado;
     private javax.swing.JPanel panelCentral;
+    private javax.swing.JButton reducirButton;
+    private javax.swing.JButton rotar180Button;
     private javax.swing.JComboBox<String> seleccionMascara;
     private javax.swing.JSlider sliderBrillo;
     private javax.swing.JSlider sliderCometa;
     private javax.swing.JSlider sliderContraste;
     private javax.swing.JSlider sliderGrosor;
+    private javax.swing.JSlider sliderRotacion;
     private javax.swing.JToggleButton toggleButtonAlisar;
     private javax.swing.JToggleButton toggleButtonElipse;
     private javax.swing.JToggleButton toggleButtonFantasma;
