@@ -1166,29 +1166,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_menuLookupOpActionPerformed
 
     private void aplicarLookup(LookupTable tabla) {
-//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-//        if (vi != null) {
-//            BufferedImage img = vi.getLienzo2D().getImage();
-////            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
-//            if (img != null) {
-//                try {
-//                    LookupOp lop = new LookupOp(tabla, null);
-//                    lop.filter(img, img);
-//                    vi.getLienzo2D().repaint();
-//                } catch (IllegalArgumentException e) {
-//                    System.err.println(e.getLocalizedMessage());
-//                }
-//            }
-//        }
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
                 try {
-//                    BufferedImage imgdest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
                     LookupOp lop = new LookupOp(tabla, null);
                     lop.filter(img, img);
-//                    vi.getLienzo2D().setImage(imgdest);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
@@ -1204,20 +1188,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonContrasteActionPerformed
 
     private void buttonOscurecerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOscurecerActionPerformed
-//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-//        if (vi != null) {
-//            BufferedImage img = vi.getLienzo2D().getImage();
-//            if (img != null) {
-//                try {
-//                    LookupTable lt = LookupTableProducer.powerFuction(LookupTableProducer.DEFAULT_POWER);
-//                    LookupOp lop = new LookupOp(lt, null);
-//                    lop.filter(img, img);
-//                    vi.getLienzo2D().repaint();
-//                } catch (Exception e) {
-//                    System.err.println(e.getLocalizedMessage());
-//                }
-//            }
-//        }
         LookupTable tabla = LookupTableProducer.powerFuction(LookupTableProducer.DEFAULT_POWER);
 
         aplicarLookup(tabla);
@@ -1233,7 +1203,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
-//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
             if (img != null) {
                 try {
                     AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(180), img.getWidth() / 2, img.getHeight() / 2);
@@ -1286,7 +1255,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
-//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
             if (img != null) {
                 try {
                     AffineTransform at = AffineTransform.getScaleInstance(1.3, 1.3);
@@ -1305,7 +1273,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
-//            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
             if (img != null) {
                 try {
                     AffineTransform at = AffineTransform.getScaleInstance(0.7, 0.7);
