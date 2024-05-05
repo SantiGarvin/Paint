@@ -91,13 +91,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonContraste = new javax.swing.JButton();
         buttonOscurecer = new javax.swing.JButton();
         buttonIluminar = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        buttonOscurecerZonasClaras = new javax.swing.JButton();
         labelTransformLineal = new javax.swing.JLabel();
         sliderRotacion = new javax.swing.JSlider();
         jSeparator6 = new javax.swing.JToolBar.Separator();
         rotar180Button = new javax.swing.JButton();
         ampliarButton = new javax.swing.JButton();
         reducirButton = new javax.swing.JButton();
+        jSeparator7 = new javax.swing.JToolBar.Separator();
+        sliderTransformLineal = new javax.swing.JSlider();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
@@ -502,12 +504,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonIluminar);
 
-        jButton4.setBackground(new java.awt.Color(242, 242, 242));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador1.png"))); // NOI18N
-        jButton4.setFocusable(false);
-        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barraImagenes.add(jButton4);
+        buttonOscurecerZonasClaras.setBackground(new java.awt.Color(242, 242, 242));
+        buttonOscurecerZonasClaras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador1.png"))); // NOI18N
+        buttonOscurecerZonasClaras.setFocusable(false);
+        buttonOscurecerZonasClaras.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonOscurecerZonasClaras.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonOscurecerZonasClaras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonOscurecerZonasClarasActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonOscurecerZonasClaras);
 
         labelTransformLineal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador2.png"))); // NOI18N
         barraImagenes.add(labelTransformLineal);
@@ -567,6 +574,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         barraImagenes.add(reducirButton);
+        barraImagenes.add(jSeparator7);
+
+        sliderTransformLineal.setMaximum(255);
+        sliderTransformLineal.setValue(0);
+        sliderTransformLineal.setPreferredSize(new java.awt.Dimension(50, 20));
+        sliderTransformLineal.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderTransformLinealStateChanged(evt);
+            }
+        });
+        sliderTransformLineal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sliderTransformLinealFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sliderTransformLinealFocusLost(evt);
+            }
+        });
+        barraImagenes.add(sliderTransformLineal);
 
         panelCentral.add(barraImagenes, java.awt.BorderLayout.PAGE_END);
 
@@ -915,43 +941,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_buttonVolcadoActionPerformed
 
-    private void menuRescaleOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRescaleOpActionPerformed
-        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-        if (vi != null) {
-            BufferedImage img = vi.getLienzo2D().getImage();
-            if (img != null) {
-                try {
-                    RescaleOp rop = new RescaleOp(1.0f, 100.0f, null);
-                    rop.filter(img, img);
-                    vi.getLienzo2D().repaint();
-                } catch (IllegalArgumentException e) {
-                    System.err.println(e.getLocalizedMessage());
-                }
-            }
-        }
-    }//GEN-LAST:event_menuRescaleOpActionPerformed
-
-    private void menuConvolveOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConvolveOpActionPerformed
-        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-        if (vi != null) {
-            BufferedImage img = vi.getLienzo2D().getImage();
-            if (img != null) {
-                try {
-                    float filtro[] = {0.1f, 0.1f, 0.1f, 0.1f, 0.2f, 0.1f, 0.1f, 0.1f, 0.1f};
-                    Kernel k = new Kernel(3, 3, filtro);
-                    ConvolveOp cop = new ConvolveOp(k);
-
-                    BufferedImage imgDest = cop.filter(img, null);
-                    vi.getLienzo2D().setImage(imgDest);
-
-                    vi.getLienzo2D().repaint();
-                } catch (IllegalArgumentException e) {
-                    System.err.println(e.getLocalizedMessage());
-                }
-            }
-        }
-    }//GEN-LAST:event_menuConvolveOpActionPerformed
-
     private void sliderBrilloFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderBrilloFocusGained
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
@@ -1122,57 +1111,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         sliderCometa.setValue(0);
     }//GEN-LAST:event_sliderCometaFocusLost
 
-    private void menuAffineTransformActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAffineTransformActionPerformed
-        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-        if (vi != null) {
-            BufferedImage img = vi.getLienzo2D().getImage();
-            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
-            if (img != null) {
-                try {
-                    AffineTransform at = AffineTransform.getScaleInstance(1.5, 1.5);
-                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-                    BufferedImage imgdest = atop.filter(img, null);
-                    vi.getLienzo2D().setImage(imgdest);
-                    vi.getLienzo2D().repaint();
-                } catch (IllegalArgumentException e) {
-                    System.err.println(e.getLocalizedMessage());
-                }
-            }
-        }
-    }//GEN-LAST:event_menuAffineTransformActionPerformed
-
-    private void menuLookupOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLookupOpActionPerformed
-        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-        if (vi != null) {
-            BufferedImage img = vi.getLienzo2D().getImage();
-            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
-            if (img != null) {
-                try {
-                    byte funcionT[] = new byte[256];
-                    for (int x = 0; x < 256; x++) {
-                        funcionT[x] = (byte) (255 - x); // Negativo
-                    }
-                    LookupTable tabla = new ByteLookupTable(0, funcionT);
-                    LookupOp lop = new LookupOp(tabla, null);
-
-                    BufferedImage imgdest = lop.filter(img, null);
-                    vi.getLienzo2D().setImage(imgdest);
-                    vi.getLienzo2D().repaint();
-                } catch (IllegalArgumentException e) {
-                    System.err.println(e.getLocalizedMessage());
-                }
-            }
-        }
-    }//GEN-LAST:event_menuLookupOpActionPerformed
-
     private void aplicarLookup(LookupTable tabla) {
+//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+//        if (vi != null) {
+//            BufferedImage img = vi.getLienzo2D().getImage();
+//            if (img != null) {
+//                try {
+//                    LookupOp lop = new LookupOp(tabla, null);
+//                    lop.filter(img, img);
+//                    vi.getLienzo2D().repaint();
+//                } catch (IllegalArgumentException e) {
+//                    System.err.println(e.getLocalizedMessage());
+//                }
+//            }
+//        }
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
                 try {
+                    BufferedImage imgCopy = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+                    Graphics2D g2d = imgCopy.createGraphics();
+                    g2d.drawImage(img, 0, 0, null);
+                    g2d.dispose();
+
                     LookupOp lop = new LookupOp(tabla, null);
-                    lop.filter(img, img);
+                    lop.filter(imgCopy, imgCopy);
+                    vi.getLienzo2D().setImage(imgCopy);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
@@ -1183,19 +1148,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void buttonContrasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonContrasteActionPerformed
         LookupTable tabla = LookupTableProducer.createLookupTable(LookupTableProducer.TYPE_SFUNCION);
-
         aplicarLookup(tabla);
     }//GEN-LAST:event_buttonContrasteActionPerformed
 
     private void buttonOscurecerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOscurecerActionPerformed
         LookupTable tabla = LookupTableProducer.powerFuction(LookupTableProducer.DEFAULT_POWER);
-
         aplicarLookup(tabla);
     }//GEN-LAST:event_buttonOscurecerActionPerformed
 
     private void buttonIluminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonIluminarActionPerformed
         LookupTable tabla = LookupTableProducer.rootFuction(LookupTableProducer.DEFAULT_ROOT);
-
         aplicarLookup(tabla);
     }//GEN-LAST:event_buttonIluminarActionPerformed
 
@@ -1287,6 +1249,161 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_reducirButtonActionPerformed
 
+    private void menuLookupOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLookupOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    byte funcionT[] = new byte[256];
+                    for (int x = 0; x < 256; x++) {
+                        funcionT[x] = (byte) (255 - x); // Negativo
+                    }
+                    LookupTable tabla = new ByteLookupTable(0, funcionT);
+                    LookupOp lop = new LookupOp(tabla, null);
+
+                    BufferedImage imgdest = lop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuLookupOpActionPerformed
+
+    private void menuAffineTransformActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAffineTransformActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
+            if (img != null) {
+                try {
+                    AffineTransform at = AffineTransform.getScaleInstance(1.5, 1.5);
+                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    BufferedImage imgdest = atop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuAffineTransformActionPerformed
+
+    private void menuConvolveOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConvolveOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    float filtro[] = {0.1f, 0.1f, 0.1f, 0.1f, 0.2f, 0.1f, 0.1f, 0.1f, 0.1f};
+                    Kernel k = new Kernel(3, 3, filtro);
+                    ConvolveOp cop = new ConvolveOp(k);
+
+                    BufferedImage imgDest = cop.filter(img, null);
+                    vi.getLienzo2D().setImage(imgDest);
+
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuConvolveOpActionPerformed
+
+    private void menuRescaleOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRescaleOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    RescaleOp rop = new RescaleOp(1.0f, 100.0f, null);
+                    rop.filter(img, img);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuRescaleOpActionPerformed
+
+    /**
+     * Genera una tabla de búsqueda para aplicar la transformación lineal con un
+     * punto de control.
+     *
+     * El efecto de esta transformación es ajustar el contraste y el brillo de
+     * la imagen basándose en el valor del parámetro "a". El parámetro "a" actúa
+     * como un punto de control en el rango [0, 255]. Para valores de píxel
+     * inferiores a 128, se aplica una transformación lineal que mapea el rango
+     * [0, 127] al rango [0, a]. Para valores de píxel mayores o iguales a 128,
+     * se aplica una transformación lineal que mapea el rango [128, 255] al
+     * rango [a, 255].
+     *
+     * Cuando "a" es menor que 128, se reducirá el contraste en las zonas
+     * oscuras y se aumentará en las zonas claras. Cuando "a" es mayor o igual
+     * que 128, se aumentará el contraste en las zonas oscuras y se reducirá en
+     * las zonas claras.
+     *
+     * @param a el valor del parámetro de control en el rango [0, 255]
+     * @return la tabla de búsqueda para la transformación
+     */
+    public LookupTable tablaTransformacionLineal(int a) {
+        byte[] lookupTable = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            if (i < 128) {
+                lookupTable[i] = (byte) ((a * i) / 128);
+            } else {
+                lookupTable[i] = (byte) (((255 - a) * (i - 128)) / 127 + a);
+            }
+        }
+        return new ByteLookupTable(0, lookupTable);
+    }
+
+    private void sliderTransformLinealStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderTransformLinealStateChanged
+        aplicarLookup(tablaTransformacionLineal(sliderTransformLineal.getValue()));
+    }//GEN-LAST:event_sliderTransformLinealStateChanged
+
+    private void sliderTransformLinealFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTransformLinealFocusGained
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            this.imgFuente = vi.getLienzo2D().getImage();
+        }
+    }//GEN-LAST:event_sliderTransformLinealFocusGained
+
+    private void sliderTransformLinealFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTransformLinealFocusLost
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            vi.getLienzo2D().setImage(imgFuente);
+            vi.getLienzo2D().repaint();
+        }
+        this.sliderTransformLineal.setValue(0);
+    }//GEN-LAST:event_sliderTransformLinealFocusLost
+
+    public LookupTable tablaOscurecerZonasClaras(int threshold) {
+        byte[] lookupTable = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            if (i < threshold) {
+                lookupTable[i] = (byte) i;
+            } else {
+                lookupTable[i] = (byte) (255 - (255 - threshold) * (i - threshold) / (255 - threshold));
+            }
+        }
+
+        System.out.println("Lookup Table:");
+        for (int i = 0; i < 256; i++) {
+            System.out.print(lookupTable[i] + " ");
+        }
+        System.out.println();
+
+        return new ByteLookupTable(0, lookupTable);
+    }
+
+    private void buttonOscurecerZonasClarasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOscurecerZonasClarasActionPerformed
+        aplicarLookup(tablaOscurecerZonasClaras(128));
+    }//GEN-LAST:event_buttonOscurecerZonasClarasActionPerformed
+
     private Kernel getKernel(int seleccion) {
         Kernel k = null;
 
@@ -1307,7 +1424,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 k = KernelProducer.createKernel(KernelProducer.TYPE_LAPLACIANA_3x3);
                 break;
             case 5:
-                k = createKernelEI3x3();
+                k = createKernelEmborronamientoIluminado3x3();
                 break;
             case 6:
                 k = createKernelEI5x5();
@@ -1328,7 +1445,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      *
      * @return el kernel para aplicar el emborronamiento iluminado 3x3
      */
-    private Kernel createKernelEI3x3() {
+    private Kernel createKernelEmborronamientoIluminado3x3() {
         float[] data = {
             2f / 9f, 2f / 9f, 2f / 9f,
             2f / 9f, 2f / 9f, 2f / 9f,
@@ -1446,9 +1563,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonIluminar;
     private javax.swing.JButton buttonNuevo;
     private javax.swing.JButton buttonOscurecer;
+    private javax.swing.JButton buttonOscurecerZonasClaras;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
-    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1462,6 +1579,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
+    private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JLabel labelTransformLineal;
     private javax.swing.JMenuItem menuAbrir;
     private javax.swing.JMenuItem menuAffineTransform;
@@ -1482,6 +1600,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JSlider sliderContraste;
     private javax.swing.JSlider sliderGrosor;
     private javax.swing.JSlider sliderRotacion;
+    private javax.swing.JSlider sliderTransformLineal;
     private javax.swing.JToggleButton toggleButtonAlisar;
     private javax.swing.JToggleButton toggleButtonElipse;
     private javax.swing.JToggleButton toggleButtonFantasma;
