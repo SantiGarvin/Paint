@@ -4,12 +4,18 @@ import sm.sgp.iu.Lienzo2D;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
+import java.awt.image.BandCombineOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
+import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.DataBuffer;
 import java.awt.image.Kernel;
 import java.awt.image.LookupOp;
 import java.awt.image.LookupTable;
@@ -28,7 +34,6 @@ import sm.image.KernelProducer;
 import sm.sgp.graficos.AbstractShape;
 import sm.sgp.iu.Lienzo2D.LienzoEvent;
 import sm.sgp.iu.Lienzo2D.LienzoListener;
-import sm.image.ImageTools;
 import sm.image.LookupTableProducer;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
@@ -99,7 +104,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ampliarButton = new javax.swing.JButton();
         reducirButton = new javax.swing.JButton();
         jSeparator7 = new javax.swing.JToolBar.Separator();
+        labelTransformacionLineal = new javax.swing.JLabel();
         sliderTransformLineal = new javax.swing.JSlider();
+        jSeparator8 = new javax.swing.JToolBar.Separator();
+        buttonShowBandas = new javax.swing.JButton();
+        seleccionBandas = new javax.swing.JComboBox<>();
+        jSeparator9 = new javax.swing.JToolBar.Separator();
+        jButton2 = new javax.swing.JButton();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
@@ -112,6 +123,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         menuConvolveOp = new javax.swing.JMenuItem();
         menuAffineTransform = new javax.swing.JMenuItem();
         menuLookupOp = new javax.swing.JMenuItem();
+        menuBandCombineOp = new javax.swing.JMenuItem();
+        menuColorConvertOp = new javax.swing.JMenuItem();
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -386,7 +399,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         );
         escritorioLayout.setVerticalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 387, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
 
         panelCentral.add(escritorio, java.awt.BorderLayout.CENTER);
@@ -438,6 +451,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(sliderContraste);
         barraImagenes.add(jSeparator4);
 
+        seleccionMascara.setBackground(new java.awt.Color(242, 242, 242));
         seleccionMascara.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Media", "Binomial", "Enfoque", "Relieve", "Laplaciano", "EI3X3", "EI5X5" }));
         seleccionMascara.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -576,6 +590,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(reducirButton);
         barraImagenes.add(jSeparator7);
 
+        labelTransformacionLineal.setText("TL");
+        barraImagenes.add(labelTransformacionLineal);
+
         sliderTransformLineal.setMaximum(255);
         sliderTransformLineal.setValue(0);
         sliderTransformLineal.setPreferredSize(new java.awt.Dimension(50, 20));
@@ -593,6 +610,36 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         barraImagenes.add(sliderTransformLineal);
+        barraImagenes.add(jSeparator8);
+
+        buttonShowBandas.setBackground(new java.awt.Color(242, 242, 242));
+        buttonShowBandas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/bandas.png"))); // NOI18N
+        buttonShowBandas.setFocusable(false);
+        buttonShowBandas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonShowBandas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonShowBandas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonShowBandasActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonShowBandas);
+
+        seleccionBandas.setBackground(new java.awt.Color(242, 242, 242));
+        seleccionBandas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "sRGB", "YCC", "Grey" }));
+        seleccionBandas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seleccionBandasActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(seleccionBandas);
+        barraImagenes.add(jSeparator9);
+
+        jButton2.setBackground(new java.awt.Color(242, 242, 242));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/combinar.png"))); // NOI18N
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barraImagenes.add(jButton2);
 
         panelCentral.add(barraImagenes, java.awt.BorderLayout.PAGE_END);
 
@@ -668,6 +715,22 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         menuImagen.add(menuLookupOp);
+
+        menuBandCombineOp.setText("BandCombineOp");
+        menuBandCombineOp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuBandCombineOpActionPerformed(evt);
+            }
+        });
+        menuImagen.add(menuBandCombineOp);
+
+        menuColorConvertOp.setText("ColorConvertOp");
+        menuColorConvertOp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuColorConvertOpActionPerformed(evt);
+            }
+        });
+        menuImagen.add(menuColorConvertOp);
 
         barraMenu.add(menuImagen);
 
@@ -960,7 +1023,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     int brillo = sliderBrillo.getValue();
                     RescaleOp rop = new RescaleOp(1.0f, brillo, null);
                     rop.filter(imgFuente, img);
-                    vi.getLienzo2D().repaint();
+                    escritorio.repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
                 }
@@ -1112,19 +1175,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_sliderCometaFocusLost
 
     private void aplicarLookup(LookupTable tabla) {
-//        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
-//        if (vi != null) {
-//            BufferedImage img = vi.getLienzo2D().getImage();
-//            if (img != null) {
-//                try {
-//                    LookupOp lop = new LookupOp(tabla, null);
-//                    lop.filter(img, img);
-//                    vi.getLienzo2D().repaint();
-//                } catch (IllegalArgumentException e) {
-//                    System.err.println(e.getLocalizedMessage());
-//                }
-//            }
-//        }
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
@@ -1253,7 +1303,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
-            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
             if (img != null) {
                 try {
                     byte funcionT[] = new byte[256];
@@ -1277,7 +1326,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
-            img = ImageTools.convertImageType(img, BufferedImage.TYPE_INT_ARGB);
             if (img != null) {
                 try {
                     AffineTransform at = AffineTransform.getScaleInstance(1.5, 1.5);
@@ -1404,6 +1452,107 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         aplicarLookup(tablaOscurecerZonasClaras(128));
     }//GEN-LAST:event_buttonOscurecerZonasClarasActionPerformed
 
+    private void menuBandCombineOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuBandCombineOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    float[][] matriz = {
+                        {1.0F, 0.0F, 0.0F},
+                        {0.0F, 0.0F, 1.0F},
+                        {0.0F, 1.0F, 0.0F}
+                    };
+                    BandCombineOp bcop = new BandCombineOp(matriz, null);
+                    bcop.filter(img.getRaster(), img.getRaster());
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuBandCombineOpActionPerformed
+
+    private void menuColorConvertOpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuColorConvertOpActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    ColorSpace cs = new sm.image.color.GreyColorSpace();
+                    ColorConvertOp op = new ColorConvertOp(cs, null);
+                    BufferedImage imgdest = op.filter(img, null);
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_menuColorConvertOpActionPerformed
+
+    private void buttonShowBandasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonShowBandasActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                for (int i = 0; i < img.getRaster().getNumBands(); i++) {
+                    BufferedImage imgBanda = getImageBand(img, i);
+                    vi = new VentanaInterna();
+                    vi.getLienzo2D().setImage(imgBanda);
+                    escritorio.add(vi);
+                    vi.setVisible(true);
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonShowBandasActionPerformed
+
+    private void seleccionBandasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionBandasActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                ColorSpace cs = null;
+                int seleccion = this.seleccionBandas.getSelectedIndex();
+
+                // TO DO: En este punto, cs tiene que tener el espacio de color a convertir
+                
+//                switch (seleccion) {
+//                    case
+//                
+//                }
+
+                try {
+                    ColorConvertOp op = new ColorConvertOp(cs, null);
+                    BufferedImage imgdest = op.filter(img, null);
+
+                    // TO DO: Crear la ventana interna y añadirle la imagen imgdest
+                    
+                    vi.getLienzo2D().setImage(imgdest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_seleccionBandasActionPerformed
+
+    private BufferedImage getImageBand(BufferedImage img, int banda) {
+        //Creamos el modelo de color de la nueva imagen basado en un espcio de color GRAY
+        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        ComponentColorModel cm = new ComponentColorModel(cs, false, false,
+                Transparency.OPAQUE,
+                DataBuffer.TYPE_BYTE);
+
+        //Creamos el nuevo raster a partir del raster de la imagen original
+        int vband[] = {banda};
+        WritableRaster bRaster = (WritableRaster) img.getRaster().createWritableChild(0, 0,
+                img.getWidth(), img.getHeight(), 0, 0, vband);
+
+        //Creamos una nueva imagen que contiene como raster el correspondiente a la banda
+        return new BufferedImage(cm, bRaster, false, null);
+    }
+
     private Kernel getKernel(int seleccion) {
         Kernel k = null;
 
@@ -1427,7 +1576,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 k = createKernelEmborronamientoIluminado3x3();
                 break;
             case 6:
-                k = createKernelEI5x5();
+                k = createKernelEmborronamientoIluminado5x5();
                 break;
             default:
                 throw new AssertionError();
@@ -1462,7 +1611,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      *
      * @return el kernel para aplicar el emborronamiento iluminado 5x5
      */
-    private Kernel createKernelEI5x5() {
+    private Kernel createKernelEmborronamientoIluminado5x5() {
         float[] data = {
             1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f,
             1f / 25f, 2f / 25f, 2f / 25f, 2f / 25f, 1f / 25f,
@@ -1564,8 +1713,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonNuevo;
     private javax.swing.JButton buttonOscurecer;
     private javax.swing.JButton buttonOscurecerZonasClaras;
+    private javax.swing.JButton buttonShowBandas;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1580,10 +1731,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
+    private javax.swing.JToolBar.Separator jSeparator8;
+    private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JLabel labelTransformLineal;
+    private javax.swing.JLabel labelTransformacionLineal;
     private javax.swing.JMenuItem menuAbrir;
     private javax.swing.JMenuItem menuAffineTransform;
     private javax.swing.JMenu menuArchivo;
+    private javax.swing.JMenuItem menuBandCombineOp;
+    private javax.swing.JMenuItem menuColorConvertOp;
     private javax.swing.JMenuItem menuConvolveOp;
     private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenu menuImagen;
@@ -1594,6 +1750,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel panelCentral;
     private javax.swing.JButton reducirButton;
     private javax.swing.JButton rotar180Button;
+    private javax.swing.JComboBox<String> seleccionBandas;
     private javax.swing.JComboBox<String> seleccionMascara;
     private javax.swing.JSlider sliderBrillo;
     private javax.swing.JSlider sliderCometa;
