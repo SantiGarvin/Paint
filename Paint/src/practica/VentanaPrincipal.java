@@ -108,9 +108,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         sliderTransformLineal = new javax.swing.JSlider();
         jSeparator8 = new javax.swing.JToolBar.Separator();
         buttonShowBandas = new javax.swing.JButton();
-        seleccionBandas = new javax.swing.JComboBox<>();
+        seleccionEspacioColor = new javax.swing.JComboBox<>();
         jSeparator9 = new javax.swing.JToolBar.Separator();
-        jButton2 = new javax.swing.JButton();
+        buttonCombinacionBandas = new javax.swing.JButton();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
@@ -624,22 +624,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonShowBandas);
 
-        seleccionBandas.setBackground(new java.awt.Color(242, 242, 242));
-        seleccionBandas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "sRGB", "YCC", "Grey" }));
-        seleccionBandas.addActionListener(new java.awt.event.ActionListener() {
+        seleccionEspacioColor.setBackground(new java.awt.Color(242, 242, 242));
+        seleccionEspacioColor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "sRGB", "YCC", "Grey" }));
+        seleccionEspacioColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seleccionBandasActionPerformed(evt);
+                seleccionEspacioColorActionPerformed(evt);
             }
         });
-        barraImagenes.add(seleccionBandas);
+        barraImagenes.add(seleccionEspacioColor);
         barraImagenes.add(jSeparator9);
 
-        jButton2.setBackground(new java.awt.Color(242, 242, 242));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/combinar.png"))); // NOI18N
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barraImagenes.add(jButton2);
+        buttonCombinacionBandas.setBackground(new java.awt.Color(242, 242, 242));
+        buttonCombinacionBandas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/combinar.png"))); // NOI18N
+        buttonCombinacionBandas.setFocusable(false);
+        buttonCombinacionBandas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonCombinacionBandas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonCombinacionBandas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCombinacionBandasActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonCombinacionBandas);
 
         panelCentral.add(barraImagenes, java.awt.BorderLayout.PAGE_END);
 
@@ -1052,8 +1057,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     ConvolveOp cop = new ConvolveOp(k);
 
                     BufferedImage imgDest = cop.filter(img, null);
-                    vi.getLienzo2D().setImage(imgDest);
 
+                    vi.getLienzo2D().setImage(imgDest);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
@@ -1123,7 +1128,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
             System.out.print(mascara[i] + " ");
 
-            if (i % 5 == 0) {
+            if ((i+1) % 6 == 0) {
                 System.out.println("");
             }
         }
@@ -1136,7 +1141,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         System.out.print("]\n Suma: " + sumaNormalizada + "\n");
 
         Kernel kernel = new Kernel(tamanoMascara, 1, mascara);
-        ConvolveOp convolveOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
+        ConvolveOp convolveOp = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
         convolveOp.filter(imgFuente, imgDest);
     }
 
@@ -1410,7 +1415,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     private void sliderTransformLinealStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderTransformLinealStateChanged
-        aplicarLookup(tablaTransformacionLineal(sliderTransformLineal.getValue()));
+//        aplicarLookup(tablaTransformacionLineal(sliderTransformLineal.getValue()));
+        // Apply the transformation to a copy of the original image
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    // Create a copy of the original image
+                    BufferedImage imgCopy = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+                    Graphics2D g2d = imgCopy.createGraphics();
+                    g2d.drawImage(img, 0, 0, null);
+                    g2d.dispose();
+
+                    // Apply the transformation to the copy
+                    int sliderValue = sliderTransformLineal.getValue();
+                    LookupTable tablaTransformacion = tablaTransformacionLineal(sliderValue);
+                    LookupOp lop = new LookupOp(tablaTransformacion, null);
+                    lop.filter(imgCopy, imgCopy);
+
+                    // Display the transformed image
+                    vi.getLienzo2D().setImage(imgCopy);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
     }//GEN-LAST:event_sliderTransformLinealStateChanged
 
     private void sliderTransformLinealFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTransformLinealFocusGained
@@ -1507,27 +1538,24 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_buttonShowBandasActionPerformed
 
-    private void seleccionBandasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionBandasActionPerformed
+    private void seleccionEspacioColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionEspacioColorActionPerformed
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
                 ColorSpace cs = null;
-                int seleccion = this.seleccionBandas.getSelectedIndex();
+                int seleccion = this.seleccionEspacioColor.getSelectedIndex();
 
                 // TO DO: En este punto, cs tiene que tener el espacio de color a convertir
-                
 //                switch (seleccion) {
 //                    case
 //                
 //                }
-
                 try {
                     ColorConvertOp op = new ColorConvertOp(cs, null);
                     BufferedImage imgdest = op.filter(img, null);
 
                     // TO DO: Crear la ventana interna y añadirle la imagen imgdest
-                    
                     vi.getLienzo2D().setImage(imgdest);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
@@ -1535,7 +1563,65 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_seleccionBandasActionPerformed
+    }//GEN-LAST:event_seleccionEspacioColorActionPerformed
+    
+    private BufferedImage combinarBandas(BufferedImage imagenOriginal) {
+        BufferedImage imagenCombinada = new BufferedImage(imagenOriginal.getWidth(),
+                imagenOriginal.getHeight(),
+                BufferedImage.TYPE_INT_ARGB); // 32-bit con alpha
+
+        for (int x = 0; x < imagenOriginal.getWidth(); x++) {
+            for (int y = 0; y < imagenOriginal.getHeight(); y++) {
+                int pixelOriginal = imagenOriginal.getRGB(x, y);
+
+                // Extraer valores RGB y alpha a arrays
+                int[] rgbOriginal = new int[3];
+                rgbOriginal[0] = (pixelOriginal >> 16) & 0xFF; // Rojo
+                rgbOriginal[1] = (pixelOriginal >> 8) & 0xFF;  // Verde
+                rgbOriginal[2] = pixelOriginal & 0xFF;      // Azul
+
+                int alphaOriginal = pixelOriginal >>> 24; // Extraer alpha
+
+                // Combinar bandas
+                float mediaRojo = (rgbOriginal[1] + rgbOriginal[2]) / 2f;
+                mediaRojo = Math.max(0, Math.min(255, mediaRojo));
+
+                float mediaVerde = (rgbOriginal[0] + rgbOriginal[2]) / 2f;
+                mediaVerde = Math.max(0, Math.min(255, mediaVerde));
+
+                float mediaAzul = (rgbOriginal[0] + rgbOriginal[1]) / 2f;
+                mediaAzul = Math.max(0, Math.min(255, mediaAzul));
+
+                int[] rgbCombinado = new int[3];
+                rgbCombinado[0] = (int) mediaRojo;
+                rgbCombinado[1] = (int) mediaVerde;
+                rgbCombinado[2] = (int) mediaAzul;
+
+                // Crear nuevo pixel con alpha
+                int pixelCombinado = (alphaOriginal << 24)
+                        | (rgbCombinado[0] << 16)
+                        | (rgbCombinado[1] << 8)
+                        | rgbCombinado[2];
+                imagenCombinada.setRGB(x, y, pixelCombinado);
+            }
+        }
+
+        return imagenCombinada;
+    }
+
+    private void buttonCombinacionBandasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCombinacionBandasActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                BufferedImage imgCombinada = combinarBandas(img);
+                vi = new VentanaInterna();
+                vi.getLienzo2D().setImage(imgCombinada);
+                escritorio.add(vi);
+                vi.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_buttonCombinacionBandasActionPerformed
 
     private BufferedImage getImageBand(BufferedImage img, int banda) {
         //Creamos el modelo de color de la nueva imagen basado en un espcio de color GRAY
@@ -1705,6 +1791,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton buttonAbrir;
     private javax.swing.JButton buttonColor;
+    private javax.swing.JButton buttonCombinacionBandas;
     private javax.swing.JButton buttonContraste;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
@@ -1716,7 +1803,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonShowBandas;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
-    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1750,7 +1836,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel panelCentral;
     private javax.swing.JButton reducirButton;
     private javax.swing.JButton rotar180Button;
-    private javax.swing.JComboBox<String> seleccionBandas;
+    private javax.swing.JComboBox<String> seleccionEspacioColor;
     private javax.swing.JComboBox<String> seleccionMascara;
     private javax.swing.JSlider sliderBrillo;
     private javax.swing.JSlider sliderCometa;
