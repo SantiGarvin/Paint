@@ -30,11 +30,16 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import sm.image.EqualizationOp;
 import sm.image.KernelProducer;
 import sm.sgp.graficos.AbstractShape;
 import sm.sgp.iu.Lienzo2D.LienzoEvent;
 import sm.sgp.iu.Lienzo2D.LienzoListener;
 import sm.image.LookupTableProducer;
+import sm.image.SepiaOp;
+import sm.image.TintOp;
+import sm.sgp.imagen.PosterizarOp;
+import sm.sgp.imagen.RojoOp;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
@@ -67,6 +72,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonNuevo = new javax.swing.JButton();
         buttonAbrir = new javax.swing.JButton();
         buttonGuardar = new javax.swing.JButton();
+        buttonDuplicar = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         toggleButtonLinea = new javax.swing.JToggleButton();
         toggleButtonRectangulo = new javax.swing.JToggleButton();
@@ -111,6 +117,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         seleccionEspacioColor = new javax.swing.JComboBox<>();
         jSeparator9 = new javax.swing.JToolBar.Separator();
         buttonCombinacionBandas = new javax.swing.JButton();
+        buttonTintar = new javax.swing.JButton();
+        buttonSepia = new javax.swing.JButton();
+        buttonEcualizar = new javax.swing.JButton();
+        buttonRojo = new javax.swing.JButton();
+        labelPosterizar = new javax.swing.JLabel();
+        sliderPosterizar = new javax.swing.JSlider();
+        jPanel3 = new javax.swing.JPanel();
+        buttonColorSrc = new javax.swing.JButton();
+        sliderTonoColor = new javax.swing.JSlider();
+        jPanel4 = new javax.swing.JPanel();
+        buttonColorDst = new javax.swing.JButton();
         panelBarraEstado = new javax.swing.JPanel();
         barraEstado = new javax.swing.JTextField();
         barraMenu = new javax.swing.JMenuBar();
@@ -194,6 +211,20 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         barraHerramientas.add(buttonGuardar);
+
+        buttonDuplicar.setBackground(new java.awt.Color(242, 242, 242));
+        buttonDuplicar.setText(".2X");
+        buttonDuplicar.setFocusable(false);
+        buttonDuplicar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonDuplicar.setMinimumSize(new java.awt.Dimension(35, 35));
+        buttonDuplicar.setPreferredSize(new java.awt.Dimension(35, 35));
+        buttonDuplicar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonDuplicar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDuplicarActionPerformed(evt);
+            }
+        });
+        barraHerramientas.add(buttonDuplicar);
         barraHerramientas.add(jSeparator2);
 
         toggleButtonLinea.setBackground(new java.awt.Color(242, 242, 242));
@@ -299,6 +330,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         buttonColor.setBackground(new java.awt.Color(0, 0, 0));
         buttonColor.setToolTipText("Color");
         buttonColor.setBorder(null);
+        buttonColor.setFocusable(false);
         buttonColor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonColor.setMaximumSize(new java.awt.Dimension(33, 33));
         buttonColor.setMinimumSize(new java.awt.Dimension(33, 33));
@@ -395,7 +427,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         escritorio.setLayout(escritorioLayout);
         escritorioLayout.setHorizontalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 812, Short.MAX_VALUE)
+            .addGap(0, 1219, Short.MAX_VALUE)
         );
         escritorioLayout.setVerticalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -646,6 +678,124 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonCombinacionBandas);
 
+        buttonTintar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/tintar.png"))); // NOI18N
+        buttonTintar.setFocusable(false);
+        buttonTintar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonTintar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonTintar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonTintarActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonTintar);
+
+        buttonSepia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/sepia.png"))); // NOI18N
+        buttonSepia.setFocusable(false);
+        buttonSepia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonSepia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonSepia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSepiaActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonSepia);
+
+        buttonEcualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/ecualizar.png"))); // NOI18N
+        buttonEcualizar.setFocusable(false);
+        buttonEcualizar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonEcualizar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonEcualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEcualizarActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonEcualizar);
+
+        buttonRojo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rojo.png"))); // NOI18N
+        buttonRojo.setFocusable(false);
+        buttonRojo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonRojo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonRojo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRojoActionPerformed(evt);
+            }
+        });
+        barraImagenes.add(buttonRojo);
+
+        labelPosterizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/posterizar.png"))); // NOI18N
+        barraImagenes.add(labelPosterizar);
+
+        sliderPosterizar.setMaximum(20);
+        sliderPosterizar.setMinimum(2);
+        sliderPosterizar.setValue(2);
+        sliderPosterizar.setPreferredSize(new java.awt.Dimension(50, 20));
+        sliderPosterizar.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderPosterizarStateChanged(evt);
+            }
+        });
+        sliderPosterizar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sliderPosterizarFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sliderPosterizarFocusLost(evt);
+            }
+        });
+        barraImagenes.add(sliderPosterizar);
+
+        jPanel3.setLayout(new javax.swing.OverlayLayout(jPanel3));
+
+        buttonColorSrc.setBackground(new java.awt.Color(0, 0, 0));
+        buttonColorSrc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonColorSrc.setMaximumSize(new java.awt.Dimension(20, 20));
+        buttonColorSrc.setMinimumSize(new java.awt.Dimension(20, 20));
+        buttonColorSrc.setPreferredSize(new java.awt.Dimension(20, 20));
+        buttonColorSrc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonColorSrc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonColorSrcActionPerformed(evt);
+            }
+        });
+        jPanel3.add(buttonColorSrc);
+
+        barraImagenes.add(jPanel3);
+
+        sliderTonoColor.setMaximum(360);
+        sliderTonoColor.setValue(0);
+        sliderTonoColor.setPreferredSize(new java.awt.Dimension(50, 20));
+        sliderTonoColor.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderTonoColorStateChanged(evt);
+            }
+        });
+        sliderTonoColor.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sliderTonoColorFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sliderTonoColorFocusLost(evt);
+            }
+        });
+        barraImagenes.add(sliderTonoColor);
+
+        jPanel4.setLayout(new javax.swing.OverlayLayout(jPanel4));
+
+        buttonColorDst.setBackground(new java.awt.Color(0, 0, 0));
+        buttonColorDst.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonColorDst.setMaximumSize(new java.awt.Dimension(20, 20));
+        buttonColorDst.setMinimumSize(new java.awt.Dimension(20, 20));
+        buttonColorDst.setPreferredSize(new java.awt.Dimension(20, 20));
+        buttonColorDst.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonColorDst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonColorDstActionPerformed(evt);
+            }
+        });
+        jPanel4.add(buttonColorDst);
+
+        barraImagenes.add(jPanel4);
+
         panelCentral.add(barraImagenes, java.awt.BorderLayout.PAGE_END);
 
         getContentPane().add(panelCentral, java.awt.BorderLayout.CENTER);
@@ -798,7 +948,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
-        VentanaInterna vi = new VentanaInterna();
+        VentanaInterna vi = new VentanaInterna(escritorio);
 
         escritorio.add(vi);
         vi.setVisible(true);
@@ -840,7 +990,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             try {
                 File f = dlg.getSelectedFile();
                 BufferedImage img = ImageIO.read(f);
-                VentanaInterna vi = new VentanaInterna();
+                VentanaInterna vi = new VentanaInterna(escritorio);
                 vi.getLienzo2D().setImage(img);
                 this.escritorio.add(vi);
                 String extension = getFileExtension(f.getName());
@@ -1095,7 +1245,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     float contraste = sliderContraste.getValue() / 10.0F + 1.0F;
                     RescaleOp rop = new RescaleOp(contraste, 0.0F, null);
                     rop.filter(imgFuente, img);
-                    vi.getLienzo2D().repaint();
+                    escritorio.repaint();
                 } catch (IllegalArgumentException e) {
                     System.err.println(e.getLocalizedMessage());
                 }
@@ -1128,7 +1278,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
             System.out.print(mascara[i] + " ");
 
-            if ((i+1) % 6 == 0) {
+            if ((i + 1) % 6 == 0) {
                 System.out.println("");
             }
         }
@@ -1415,26 +1565,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     private void sliderTransformLinealStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderTransformLinealStateChanged
-//        aplicarLookup(tablaTransformacionLineal(sliderTransformLineal.getValue()));
-        // Apply the transformation to a copy of the original image
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null && imgFuente != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
                 try {
-                    // Create a copy of the original image
                     BufferedImage imgCopy = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
                     Graphics2D g2d = imgCopy.createGraphics();
                     g2d.drawImage(img, 0, 0, null);
                     g2d.dispose();
 
-                    // Apply the transformation to the copy
                     int sliderValue = sliderTransformLineal.getValue();
                     LookupTable tablaTransformacion = tablaTransformacionLineal(sliderValue);
                     LookupOp lop = new LookupOp(tablaTransformacion, null);
                     lop.filter(imgCopy, imgCopy);
 
-                    // Display the transformed image
                     vi.getLienzo2D().setImage(imgCopy);
                     vi.getLienzo2D().repaint();
                 } catch (IllegalArgumentException e) {
@@ -1460,13 +1605,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.sliderTransformLineal.setValue(0);
     }//GEN-LAST:event_sliderTransformLinealFocusLost
 
-    public LookupTable tablaOscurecerZonasClaras(int threshold) {
+    public LookupTable tablaOscurecerZonasClaras(int umbral) {
         byte[] lookupTable = new byte[256];
         for (int i = 0; i < 256; i++) {
-            if (i < threshold) {
+            if (i < umbral) {
                 lookupTable[i] = (byte) i;
             } else {
-                lookupTable[i] = (byte) (255 - (255 - threshold) * (i - threshold) / (255 - threshold));
+                lookupTable[i] = (byte) (255 - (255 - umbral) * (i - umbral) / (255 - umbral));
             }
         }
 
@@ -1529,7 +1674,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             if (img != null) {
                 for (int i = 0; i < img.getRaster().getNumBands(); i++) {
                     BufferedImage imgBanda = getImageBand(img, i);
-                    vi = new VentanaInterna();
+                    vi = new VentanaInterna(escritorio);
                     vi.getLienzo2D().setImage(imgBanda);
                     escritorio.add(vi);
                     vi.setVisible(true);
@@ -1543,28 +1688,74 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
-                ColorSpace cs = null;
-                int seleccion = this.seleccionEspacioColor.getSelectedIndex();
-
-                // TO DO: En este punto, cs tiene que tener el espacio de color a convertir
-//                switch (seleccion) {
-//                    case
-//                
-//                }
                 try {
-                    ColorConvertOp op = new ColorConvertOp(cs, null);
-                    BufferedImage imgdest = op.filter(img, null);
+                    ColorSpace cs = getEspacioColor(this.seleccionEspacioColor.getSelectedIndex());
+                    String colorSpaceName = getNombreEspacioColor(this.seleccionEspacioColor.getSelectedIndex());
 
-                    // TO DO: Crear la ventana interna y añadirle la imagen imgdest
-                    vi.getLienzo2D().setImage(imgdest);
-                    vi.getLienzo2D().repaint();
+                    // Verificar si es necesario realizar la conversión
+                    if (cs != null && !img.getColorModel().getColorSpace().equals(cs)) {
+                        ColorConvertOp op = new ColorConvertOp(cs, null);
+                        BufferedImage imgdest = op.filter(img, null);
+
+                        // Mostrar la nueva imagen en una ventana interna
+                        showBandasVentanaNueva(imgdest, vi.getTitle(), colorSpaceName);
+                    } else {
+                        // Si no es necesario cambiar, mostrar la imagen original en una nueva ventana
+                        nuevaVentanaInterna(img, vi.getTitle(), "Original");
+                    }
                 } catch (IllegalArgumentException e) {
-                    System.err.println(e.getLocalizedMessage());
+                    System.err.println("Error converting image: " + e.getLocalizedMessage());
                 }
             }
         }
     }//GEN-LAST:event_seleccionEspacioColorActionPerformed
-    
+
+    private void showBandasVentanaNueva(BufferedImage img, String title, String spaceName) {
+        for (int i = 0; i < img.getRaster().getNumBands(); i++) {
+            BufferedImage imgBanda = getImageBand(img, i);
+            VentanaInterna newWindow = new VentanaInterna(escritorio);
+            newWindow.setTitle(title + " (" + spaceName + " - Banda " + (i + 1) + ")");
+            newWindow.getLienzo2D().setImage(imgBanda);
+            escritorio.add(newWindow);
+            newWindow.setVisible(true);
+        }
+    }
+
+    private ColorSpace getEspacioColor(int selection) {
+        switch (selection) {
+            case 0:
+                return ColorSpace.getInstance(ColorSpace.CS_sRGB);
+            case 1:
+                return ColorSpace.getInstance(ColorSpace.CS_PYCC);
+            case 2:
+                return ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            default:
+                System.err.println("Invalid color space selection: " + selection);
+                return null;
+        }
+    }
+
+    private String getNombreEspacioColor(int selection) {
+        switch (selection) {
+            case 0:
+                return "sRGB";
+            case 1:
+                return "YCC";
+            case 2:
+                return "GREY";
+            default:
+                return "Unknown";
+        }
+    }
+
+    private void nuevaVentanaInterna(BufferedImage img, String title, String spaceName) {
+        VentanaInterna newWindow = new VentanaInterna(escritorio);
+        newWindow.setTitle(title + " (" + spaceName + ")");
+        newWindow.getLienzo2D().setImage(img);
+        escritorio.add(newWindow);
+        newWindow.setVisible(true);
+    }
+
     private BufferedImage combinarBandas(BufferedImage imagenOriginal) {
         BufferedImage imagenCombinada = new BufferedImage(imagenOriginal.getWidth(),
                 imagenOriginal.getHeight(),
@@ -1614,14 +1805,278 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (vi != null) {
             BufferedImage img = vi.getLienzo2D().getImage();
             if (img != null) {
-                BufferedImage imgCombinada = combinarBandas(img);
-                vi = new VentanaInterna();
-                vi.getLienzo2D().setImage(imgCombinada);
-                escritorio.add(vi);
-                vi.setVisible(true);
+                try {
+                    BufferedImage imgCombinada = combinarBandas(img);
+                    vi = new VentanaInterna(escritorio);
+                    vi.getLienzo2D().setImage(imgCombinada);
+                    escritorio.add(vi);
+                    vi.setVisible(true);
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
             }
         }
     }//GEN-LAST:event_buttonCombinacionBandasActionPerformed
+
+    private void buttonDuplicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDuplicarActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    VentanaInterna viNueva = new VentanaInterna(escritorio, vi);
+                    escritorio.add(viNueva);
+                    viNueva.setVisible(true);
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonDuplicarActionPerformed
+
+    private void buttonTintarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTintarActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            Color nuevoColor = JColorChooser.showDialog(null, "Elige un color", null);
+            if (nuevoColor != null) {
+                BufferedImage img = vi.getLienzo2D().getImage();
+                if (img != null) {
+                    try {
+                        TintOp tintado = new TintOp(nuevoColor, 0.5f);
+                        BufferedImage imgDest = tintado.filter(img, img);
+                        vi.getLienzo2D().setImage(imgDest);
+                        escritorio.repaint();
+                    } catch (IllegalArgumentException e) {
+                        System.err.println(e.getLocalizedMessage());
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonTintarActionPerformed
+
+    private void buttonSepiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSepiaActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    SepiaOp sepia = new SepiaOp();
+                    BufferedImage imgDest = sepia.filter(img, img);
+                    vi.getLienzo2D().setImage(imgDest);
+                    escritorio.repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonSepiaActionPerformed
+
+    private void buttonEcualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEcualizarActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    EqualizationOp ecualizacion = new EqualizationOp();
+                    BufferedImage imgDest = ecualizacion.filter(img, img);
+                    vi.getLienzo2D().setImage(imgDest);
+                    vi.getLienzo2D().repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonEcualizarActionPerformed
+
+    private void buttonRojoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRojoActionPerformed
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            BufferedImage img = vi.getLienzo2D().getImage();
+            if (img != null) {
+                try {
+                    RojoOp rojo = new RojoOp(20);
+                    BufferedImage imgDest = rojo.filter(img, img);
+                    vi.getLienzo2D().setImage(imgDest);
+                    escritorio.repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonRojoActionPerformed
+
+    private void buttonColorSrcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonColorSrcActionPerformed
+        Color colorSeleccionado = JColorChooser.showDialog(this, "Seleccionar color", null);
+
+        if (colorSeleccionado != null) {
+            this.buttonColorSrc.setBackground(colorSeleccionado);
+            Lienzo2D lienzo = this.getSelectedLienzo();
+            if (lienzo != null) {
+                lienzo.setColor(colorSeleccionado);
+                lienzo.updateFiguraSeleccionada();
+            }
+            this.buttonColorSrc.repaint();
+        }
+    }//GEN-LAST:event_buttonColorSrcActionPerformed
+
+    private void buttonColorDstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonColorDstActionPerformed
+        Color colorSeleccionado = JColorChooser.showDialog(this, "Seleccionar color", null);
+
+        if (colorSeleccionado != null) {
+            this.buttonColorDst.setBackground(colorSeleccionado);
+            Lienzo2D lienzo = this.getSelectedLienzo();
+            if (lienzo != null) {
+                lienzo.setColor(colorSeleccionado);
+                lienzo.updateFiguraSeleccionada();
+            }
+            this.buttonColorDst.repaint();
+        }
+    }//GEN-LAST:event_buttonColorDstActionPerformed
+
+    private void sliderPosterizarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderPosterizarStateChanged
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            if (imgFuente != null) {
+                try {
+                    PosterizarOp poster = new PosterizarOp(this.sliderPosterizar.getValue());
+                    BufferedImage imgDest = poster.filter(imgFuente, null);
+                    vi.getLienzo2D().setImage(imgDest);
+                    escritorio.repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_sliderPosterizarStateChanged
+
+    private void sliderPosterizarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderPosterizarFocusGained
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            this.imgFuente = vi.getLienzo2D().getImage();
+        }
+    }//GEN-LAST:event_sliderPosterizarFocusGained
+
+    private void sliderPosterizarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderPosterizarFocusLost
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            vi.getLienzo2D().setImage(imgFuente);
+            vi.getLienzo2D().repaint();
+        }
+        this.sliderPosterizar.setValue(2);
+    }//GEN-LAST:event_sliderPosterizarFocusLost
+
+    private void sliderTonoColorStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderTonoColorStateChanged
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            if (imgFuente != null) {
+                try {
+                    Color colorC1 = buttonColorSrc.getBackground();
+                    Color colorC2 = buttonColorDst.getBackground();
+
+                    // Convertir los colores a sus valores de tono (H)
+                    float[] hsbC1 = Color.RGBtoHSB(colorC1.getRed(), colorC1.getGreen(), colorC1.getBlue(), null);
+                    float[] hsbC2 = Color.RGBtoHSB(colorC2.getRed(), colorC2.getGreen(), colorC2.getBlue(), null);
+
+                    float C1 = hsbC1[0] * 360; // Convertir H de [0,1] a [0,360]
+                    float C2 = hsbC2[0] * 360; // Convertir H de [0,1] a [0,360]
+
+                    float T = sliderTonoColor.getValue();
+
+                    BufferedImage imgDest = cambiarTonoImagen(imgFuente, C1, C2, T);
+                    vi.getLienzo2D().setImage(imgDest);
+                    escritorio.repaint();
+                } catch (IllegalArgumentException e) {
+                    System.err.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_sliderTonoColorStateChanged
+
+    private BufferedImage cambiarTonoImagen(BufferedImage img, float C1, float C2, float T) {
+//        int width = img.getWidth();
+//        int height = img.getHeight();
+//        BufferedImage result = new BufferedImage(width, height, img.getType());
+//
+//        for (int x = 0; x < width; x++) {
+//            for (int y = 0; y < height; y++) {
+//                Color color = new Color(img.getRGB(x, y));
+//                float[] hsbValues = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+//
+//                float H_px = hsbValues[0] * 360; // Convertir H de [0,1] a [0,360]
+//                float S_px = hsbValues[1]; // Saturación
+//                float B_px = hsbValues[2]; // Brillo
+//
+//                float distancia = calcularDistancia(H_px, C1);
+//
+//                float H_resultado;
+//                if (distancia <= T) {
+//                    H_resultado = C2;
+//                } else {
+//                    H_resultado = H_px;
+//                }
+//
+//                int rgbResultado = Color.HSBtoRGB(H_resultado / 360, S_px, B_px); // Convertir H de nuevo a [0,1]
+//                result.setRGB(x, y, rgbResultado);
+//            }
+//        }
+//
+//        return result;
+        int width = img.getWidth();
+        int height = img.getHeight();
+        BufferedImage result = new BufferedImage(width, height, img.getType());
+
+        // Reutilizar un array para almacenar valores HSB
+        float[] hsbValues = new float[3];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int rgb = img.getRGB(x, y);
+                Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF, hsbValues);
+
+                float H_px = hsbValues[0] * 360; // Convertir H de [0,1] a [0,360]
+                float S_px = hsbValues[1]; // Saturación
+                float B_px = hsbValues[2]; // Brillo
+
+                float distancia = calcularDistancia(H_px, C1);
+
+                float H_resultado;
+                if (distancia <= T) {
+                    H_resultado = C2;
+                } else {
+                    H_resultado = H_px;
+                }
+
+                int rgbResultado = Color.HSBtoRGB(H_resultado / 360, S_px, B_px); // Convertir H de nuevo a [0,1]
+                result.setRGB(x, y, rgbResultado);
+            }
+        }
+
+        return result;
+    }
+
+    private float calcularDistancia(float H1, float H2) {
+        float distancia = Math.abs(H1 - H2);
+        if (distancia > 180) {
+            distancia = 360 - distancia;
+        }
+        return distancia;
+    }
+
+    private void sliderTonoColorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTonoColorFocusGained
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null) {
+            this.imgFuente = vi.getLienzo2D().getImage();
+        }
+    }//GEN-LAST:event_sliderTonoColorFocusGained
+
+    private void sliderTonoColorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTonoColorFocusLost
+        VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
+        if (vi != null && imgFuente != null) {
+            vi.getLienzo2D().setImage(imgFuente);
+            vi.getLienzo2D().repaint();
+        }
+        this.sliderTonoColor.setValue(0);
+    }//GEN-LAST:event_sliderTonoColorFocusLost
 
     private BufferedImage getImageBand(BufferedImage img, int banda) {
         //Creamos el modelo de color de la nueva imagen basado en un espcio de color GRAY
@@ -1629,7 +2084,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ComponentColorModel cm = new ComponentColorModel(cs, false, false,
                 Transparency.OPAQUE,
                 DataBuffer.TYPE_BYTE);
-
         //Creamos el nuevo raster a partir del raster de la imagen original
         int vband[] = {banda};
         WritableRaster bRaster = (WritableRaster) img.getRaster().createWritableChild(0, 0,
@@ -1757,7 +2211,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -1791,8 +2245,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton buttonAbrir;
     private javax.swing.JButton buttonColor;
+    private javax.swing.JButton buttonColorDst;
+    private javax.swing.JButton buttonColorSrc;
     private javax.swing.JButton buttonCombinacionBandas;
     private javax.swing.JButton buttonContraste;
+    private javax.swing.JButton buttonDuplicar;
+    private javax.swing.JButton buttonEcualizar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton buttonGuardar;
@@ -1800,7 +2258,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonNuevo;
     private javax.swing.JButton buttonOscurecer;
     private javax.swing.JButton buttonOscurecerZonasClaras;
+    private javax.swing.JButton buttonRojo;
+    private javax.swing.JButton buttonSepia;
     private javax.swing.JButton buttonShowBandas;
+    private javax.swing.JButton buttonTintar;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
@@ -1810,6 +2271,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -1819,6 +2282,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
     private javax.swing.JToolBar.Separator jSeparator9;
+    private javax.swing.JLabel labelPosterizar;
     private javax.swing.JLabel labelTransformLineal;
     private javax.swing.JLabel labelTransformacionLineal;
     private javax.swing.JMenuItem menuAbrir;
@@ -1842,7 +2306,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JSlider sliderCometa;
     private javax.swing.JSlider sliderContraste;
     private javax.swing.JSlider sliderGrosor;
+    private javax.swing.JSlider sliderPosterizar;
     private javax.swing.JSlider sliderRotacion;
+    private javax.swing.JSlider sliderTonoColor;
     private javax.swing.JSlider sliderTransformLineal;
     private javax.swing.JToggleButton toggleButtonAlisar;
     private javax.swing.JToggleButton toggleButtonElipse;

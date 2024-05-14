@@ -1,22 +1,55 @@
 package practica;
 
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import sm.sgp.iu.Lienzo2D;
 
 public class VentanaInterna extends javax.swing.JInternalFrame {
 
+    private static int xOffset = 30;
+    private static int yOffset = 30;
+
     /**
      * Creates new form VentanaInterna
+     *
+     * @param escritorio
      */
-    public VentanaInterna() {
+    public VentanaInterna(JDesktopPane escritorio) {
         initComponents();
         this.setTitle("Nueva ventana");
-        this.setSize(800,800);
+        this.setSize(800, 800);
+
+        posicionVentana(escritorio);
+    }
+    
+    public VentanaInterna(JDesktopPane escritorio, VentanaInterna original) {
+        this(escritorio);
+        this.lienzo2D.setImage(original.getLienzo2D().getPaintedImage());
     }
 
     public Lienzo2D getLienzo2D() {
         return lienzo2D;
     }
-    
+
+    private void posicionVentana(JDesktopPane escritorio) {
+        JInternalFrame[] allFrames = escritorio.getAllFrames();
+        int x = 0, y = 0;
+        if (allFrames.length > 0) {
+            JInternalFrame lastFrame = allFrames[0];
+            x = lastFrame.getX() + xOffset;
+            y = lastFrame.getY() + yOffset;
+        }
+
+        if (x + this.getWidth() > escritorio.getWidth()) {
+            x = 0;
+        }
+        if (y + this.getHeight() > escritorio.getHeight()) {
+            y = 0;
+        }
+
+        this.setLocation(x, y);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
