@@ -443,6 +443,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         sliderBrillo.setMaximum(255);
         sliderBrillo.setMinimum(-255);
+        sliderBrillo.setToolTipText("Brillo");
         sliderBrillo.setValue(0);
         sliderBrillo.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderBrillo.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -465,6 +466,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         sliderContraste.setMaximum(10);
         sliderContraste.setMinimum(-10);
+        sliderContraste.setToolTipText("Contraste");
         sliderContraste.setValue(0);
         sliderContraste.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderContraste.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -485,6 +487,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         seleccionMascara.setBackground(new java.awt.Color(242, 242, 242));
         seleccionMascara.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Media", "Binomial", "Enfoque", "Relieve", "Laplaciano", "EI3X3", "EI5X5" }));
+        seleccionMascara.setToolTipText("Máscara");
         seleccionMascara.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seleccionMascaraActionPerformed(evt);
@@ -496,6 +499,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(jLabel3);
 
         sliderCometa.setMaximum(150);
+        sliderCometa.setToolTipText("Cometa");
         sliderCometa.setValue(0);
         sliderCometa.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderCometa.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -516,6 +520,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonContraste.setBackground(new java.awt.Color(242, 242, 242));
         buttonContraste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/contraste2.png"))); // NOI18N
+        buttonContraste.setToolTipText("Contraste");
         buttonContraste.setFocusable(false);
         buttonContraste.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonContraste.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -528,6 +533,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonOscurecer.setBackground(new java.awt.Color(242, 242, 242));
         buttonOscurecer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/ocurecer.png"))); // NOI18N
+        buttonOscurecer.setToolTipText("Oscurecer");
         buttonOscurecer.setFocusable(false);
         buttonOscurecer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonOscurecer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -540,6 +546,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonIluminar.setBackground(new java.awt.Color(242, 242, 242));
         buttonIluminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iluminar.png"))); // NOI18N
+        buttonIluminar.setToolTipText("Iluminar");
         buttonIluminar.setFocusable(false);
         buttonIluminar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonIluminar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -552,6 +559,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonOscurecerZonasClaras.setBackground(new java.awt.Color(242, 242, 242));
         buttonOscurecerZonasClaras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/operador1.png"))); // NOI18N
+        buttonOscurecerZonasClaras.setToolTipText("Modo noche");
         buttonOscurecerZonasClaras.setFocusable(false);
         buttonOscurecerZonasClaras.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonOscurecerZonasClaras.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -567,6 +575,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         sliderRotacion.setMaximum(360);
         sliderRotacion.setMinimum(-360);
+        sliderRotacion.setToolTipText("Rotar");
         sliderRotacion.setValue(0);
         sliderRotacion.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderRotacion.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -587,6 +596,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         rotar180Button.setBackground(new java.awt.Color(242, 242, 242));
         rotar180Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rotar180.png"))); // NOI18N
+        rotar180Button.setToolTipText("Giro 180");
         rotar180Button.setFocusable(false);
         rotar180Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rotar180Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -599,6 +609,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         ampliarButton.setBackground(new java.awt.Color(242, 242, 242));
         ampliarButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/mas.png"))); // NOI18N
+        ampliarButton.setToolTipText("Ampliar");
         ampliarButton.setFocusable(false);
         ampliarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         ampliarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -611,6 +622,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         reducirButton.setBackground(new java.awt.Color(242, 242, 242));
         reducirButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/menos.png"))); // NOI18N
+        reducirButton.setToolTipText("Disminuir");
         reducirButton.setFocusable(false);
         reducirButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         reducirButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -626,6 +638,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(labelTransformacionLineal);
 
         sliderTransformLineal.setMaximum(255);
+        sliderTransformLineal.setToolTipText("Transformación Lineal");
         sliderTransformLineal.setValue(0);
         sliderTransformLineal.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderTransformLineal.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -646,6 +659,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonShowBandas.setBackground(new java.awt.Color(242, 242, 242));
         buttonShowBandas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/bandas.png"))); // NOI18N
+        buttonShowBandas.setToolTipText("Bandas");
         buttonShowBandas.setFocusable(false);
         buttonShowBandas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonShowBandas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -658,6 +672,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         seleccionEspacioColor.setBackground(new java.awt.Color(242, 242, 242));
         seleccionEspacioColor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "sRGB", "YCC", "Grey" }));
+        seleccionEspacioColor.setToolTipText("Espacio color");
         seleccionEspacioColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seleccionEspacioColorActionPerformed(evt);
@@ -668,6 +683,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonCombinacionBandas.setBackground(new java.awt.Color(242, 242, 242));
         buttonCombinacionBandas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/combinar.png"))); // NOI18N
+        buttonCombinacionBandas.setToolTipText("Combinar");
         buttonCombinacionBandas.setFocusable(false);
         buttonCombinacionBandas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonCombinacionBandas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -678,7 +694,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonCombinacionBandas);
 
+        buttonTintar.setBackground(new java.awt.Color(242, 242, 242));
         buttonTintar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/tintar.png"))); // NOI18N
+        buttonTintar.setToolTipText("Tintar");
         buttonTintar.setFocusable(false);
         buttonTintar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonTintar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -689,7 +707,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonTintar);
 
+        buttonSepia.setBackground(new java.awt.Color(242, 242, 242));
         buttonSepia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/sepia.png"))); // NOI18N
+        buttonSepia.setToolTipText("Filtro sepia");
         buttonSepia.setFocusable(false);
         buttonSepia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonSepia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -700,7 +720,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonSepia);
 
+        buttonEcualizar.setBackground(new java.awt.Color(242, 242, 242));
         buttonEcualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/ecualizar.png"))); // NOI18N
+        buttonEcualizar.setToolTipText("Ecualizar");
         buttonEcualizar.setFocusable(false);
         buttonEcualizar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonEcualizar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -711,7 +733,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         barraImagenes.add(buttonEcualizar);
 
+        buttonRojo.setBackground(new java.awt.Color(242, 242, 242));
         buttonRojo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rojo.png"))); // NOI18N
+        buttonRojo.setToolTipText("Filtro rojo");
         buttonRojo.setFocusable(false);
         buttonRojo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonRojo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -727,6 +751,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         sliderPosterizar.setMaximum(20);
         sliderPosterizar.setMinimum(2);
+        sliderPosterizar.setToolTipText("Posterizar");
         sliderPosterizar.setValue(2);
         sliderPosterizar.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderPosterizar.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -747,10 +772,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jPanel3.setLayout(new javax.swing.OverlayLayout(jPanel3));
 
         buttonColorSrc.setBackground(new java.awt.Color(0, 0, 0));
+        buttonColorSrc.setToolTipText("Color fuente");
         buttonColorSrc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonColorSrc.setMaximumSize(new java.awt.Dimension(20, 20));
-        buttonColorSrc.setMinimumSize(new java.awt.Dimension(20, 20));
-        buttonColorSrc.setPreferredSize(new java.awt.Dimension(20, 20));
+        buttonColorSrc.setMaximumSize(new java.awt.Dimension(15, 15));
+        buttonColorSrc.setMinimumSize(new java.awt.Dimension(15, 15));
+        buttonColorSrc.setPreferredSize(new java.awt.Dimension(15, 15));
         buttonColorSrc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         buttonColorSrc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -762,6 +788,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         barraImagenes.add(jPanel3);
 
         sliderTonoColor.setMaximum(360);
+        sliderTonoColor.setToolTipText("Cambio tono");
         sliderTonoColor.setValue(0);
         sliderTonoColor.setPreferredSize(new java.awt.Dimension(50, 20));
         sliderTonoColor.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -782,10 +809,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jPanel4.setLayout(new javax.swing.OverlayLayout(jPanel4));
 
         buttonColorDst.setBackground(new java.awt.Color(0, 0, 0));
+        buttonColorDst.setToolTipText("Color destino");
         buttonColorDst.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        buttonColorDst.setMaximumSize(new java.awt.Dimension(20, 20));
-        buttonColorDst.setMinimumSize(new java.awt.Dimension(20, 20));
-        buttonColorDst.setPreferredSize(new java.awt.Dimension(20, 20));
+        buttonColorDst.setMaximumSize(new java.awt.Dimension(15, 15));
+        buttonColorDst.setMinimumSize(new java.awt.Dimension(15, 15));
+        buttonColorDst.setPreferredSize(new java.awt.Dimension(15, 15));
         buttonColorDst.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         buttonColorDst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1710,11 +1738,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_seleccionEspacioColorActionPerformed
 
-    private void showBandasVentanaNueva(BufferedImage img, String title, String spaceName) {
+    private void showBandasVentanaNueva(BufferedImage img, String titulo, String nombreEspacio) {
         for (int i = 0; i < img.getRaster().getNumBands(); i++) {
             BufferedImage imgBanda = getImageBand(img, i);
             VentanaInterna newWindow = new VentanaInterna(escritorio);
-            newWindow.setTitle(title + " (" + spaceName + " - Banda " + (i + 1) + ")");
+            newWindow.setTitle(titulo + " (" + nombreEspacio + " - Banda " + (i + 1) + ")");
             newWindow.getLienzo2D().setImage(imgBanda);
             escritorio.add(newWindow);
             newWindow.setVisible(true);
@@ -1993,49 +2021,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_sliderTonoColorStateChanged
 
     private BufferedImage cambiarTonoImagen(BufferedImage img, float C1, float C2, float T) {
-//        int width = img.getWidth();
-//        int height = img.getHeight();
-//        BufferedImage result = new BufferedImage(width, height, img.getType());
-//
-//        for (int x = 0; x < width; x++) {
-//            for (int y = 0; y < height; y++) {
-//                Color color = new Color(img.getRGB(x, y));
-//                float[] hsbValues = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-//
-//                float H_px = hsbValues[0] * 360; // Convertir H de [0,1] a [0,360]
-//                float S_px = hsbValues[1]; // Saturación
-//                float B_px = hsbValues[2]; // Brillo
-//
-//                float distancia = calcularDistancia(H_px, C1);
-//
-//                float H_resultado;
-//                if (distancia <= T) {
-//                    H_resultado = C2;
-//                } else {
-//                    H_resultado = H_px;
-//                }
-//
-//                int rgbResultado = Color.HSBtoRGB(H_resultado / 360, S_px, B_px); // Convertir H de nuevo a [0,1]
-//                result.setRGB(x, y, rgbResultado);
-//            }
-//        }
-//
-//        return result;
         int width = img.getWidth();
         int height = img.getHeight();
         BufferedImage result = new BufferedImage(width, height, img.getType());
 
-        // Reutilizar un array para almacenar valores HSB
-        float[] hsbValues = new float[3];
+        float[] valoresHSB = new float[3];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int rgb = img.getRGB(x, y);
-                Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF, hsbValues);
 
-                float H_px = hsbValues[0] * 360; // Convertir H de [0,1] a [0,360]
-                float S_px = hsbValues[1]; // Saturación
-                float B_px = hsbValues[2]; // Brillo
+//                int alpha = (rgb >> 24) & 0xFF; // Extraer el valor del canal alfa
+                int rojo = (rgb >> 16) & 0xFF;  // Extraer el valor del canal rojo
+                int verde = (rgb >> 8) & 0xFF;  // Extraer el valor del canal verde
+                int azul = rgb & 0xFF;          // Extraer el valor del canal azul
+
+                // Convertir RGB a HSB
+                Color.RGBtoHSB(rojo, verde, azul, valoresHSB);
+
+                float H_px = valoresHSB[0] * 360; // Convertir H de [0,1] a [0,360]
+                float S_px = valoresHSB[1]; // Saturación
+                float B_px = valoresHSB[2]; // Brillo
 
                 float distancia = calcularDistancia(H_px, C1);
 
