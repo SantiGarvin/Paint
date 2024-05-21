@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import static java.lang.Math.pow;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.swing.JOptionPane;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -40,11 +42,16 @@ import sm.image.SepiaOp;
 import sm.image.TintOp;
 import sm.sgp.imagen.PosterizarOp;
 import sm.sgp.imagen.RojoOp;
+import sm.sound.SMClipPlayer;
+import sm.sound.SMSoundRecorder;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     private BufferedImage imgFuente;
     MiManejadorLienzo manejador = new MiManejadorLienzo();
+
+    private SMClipPlayer player = null;
+    private SMSoundRecorder recorder = null;
 
     public VentanaPrincipal() {
         initComponents();
@@ -88,6 +95,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         sliderGrosor = new javax.swing.JSlider();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         buttonVolcado = new javax.swing.JButton();
+        jSeparator10 = new javax.swing.JToolBar.Separator();
+        buttonPlay = new javax.swing.JButton();
+        buttonStop = new javax.swing.JButton();
+        listaReproduccion = new javax.swing.JComboBox<>();
+        jSeparator11 = new javax.swing.JToolBar.Separator();
+        buttonGrabar = new javax.swing.JButton();
         escritorio = new javax.swing.JDesktopPane();
         barraImagenes = new javax.swing.JToolBar();
         jLabel1 = new javax.swing.JLabel();
@@ -134,6 +147,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         menuArchivo = new javax.swing.JMenu();
         menuNuevo = new javax.swing.JMenuItem();
         menuAbrir = new javax.swing.JMenuItem();
+        menuAbrirSonido = new javax.swing.JMenuItem();
         menuGuardar = new javax.swing.JMenuItem();
         menuImagen = new javax.swing.JMenu();
         menuRescaleOp = new javax.swing.JMenuItem();
@@ -420,6 +434,50 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
         barraHerramientas.add(buttonVolcado);
+        barraHerramientas.add(jSeparator10);
+
+        buttonPlay.setBackground(new java.awt.Color(242, 242, 242));
+        buttonPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/play.png"))); // NOI18N
+        buttonPlay.setToolTipText("Play");
+        buttonPlay.setFocusable(false);
+        buttonPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonPlayActionPerformed(evt);
+            }
+        });
+        barraHerramientas.add(buttonPlay);
+
+        buttonStop.setBackground(new java.awt.Color(242, 242, 242));
+        buttonStop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/stop.png"))); // NOI18N
+        buttonStop.setToolTipText("Stop");
+        buttonStop.setFocusable(false);
+        buttonStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonStopActionPerformed(evt);
+            }
+        });
+        barraHerramientas.add(buttonStop);
+
+        listaReproduccion.setBackground(new java.awt.Color(242, 242, 242));
+        listaReproduccion.setToolTipText("Lista de reproducción");
+        barraHerramientas.add(listaReproduccion);
+        barraHerramientas.add(jSeparator11);
+
+        buttonGrabar.setBackground(new java.awt.Color(242, 242, 242));
+        buttonGrabar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/record.png"))); // NOI18N
+        buttonGrabar.setFocusable(false);
+        buttonGrabar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buttonGrabar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buttonGrabar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonGrabarActionPerformed(evt);
+            }
+        });
+        barraHerramientas.add(buttonGrabar);
 
         panelCentral.add(barraHerramientas, java.awt.BorderLayout.PAGE_START);
 
@@ -855,6 +913,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         menuArchivo.add(menuAbrir);
 
+        menuAbrirSonido.setText("Abrir sonido");
+        menuAbrirSonido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAbrirSonidoActionPerformed(evt);
+            }
+        });
+        menuArchivo.add(menuAbrirSonido);
+
         menuGuardar.setText("Guardar");
         menuGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1006,6 +1072,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void menuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAbrirActionPerformed
         JFileChooser dlg = new JFileChooser("/home/santi/Escritorio/SMM/img_prueba");
+//        JFileChooser dlg = new JFileChooser();
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (*.png, *.jpg, *.jpeg, *.gif, *.bmp)", "png", "jpg", "jpeg", "gif", "bmp");
         dlg.addChoosableFileFilter(filter);
@@ -1580,15 +1647,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      * @param a el valor del parámetro de control en el rango [0, 255]
      * @return la tabla de búsqueda para la transformación
      */
-    public LookupTable tablaTransformacionLineal(int a) {
+    public LookupTable tablaTransformacionLineal(double a) {
         byte[] lookupTable = new byte[256];
         for (int i = 0; i < 256; i++) {
             if (i < 128) {
-                lookupTable[i] = (byte) ((a * i) / 128);
+                lookupTable[i] = (byte) ((a * i) / (double) 128);
             } else {
                 lookupTable[i] = (byte) (((255 - a) * (i - 128)) / 127 + a);
             }
         }
+
+        for (int i = 0; i < 256; i++) {
+            System.out.print(lookupTable[i] + " ");
+            if ((i + 1) % 64 == 0) {
+                System.out.println("");
+            }
+        }
+
         return new ByteLookupTable(0, lookupTable);
     }
 
@@ -1620,7 +1695,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void sliderTransformLinealFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sliderTransformLinealFocusGained
         VentanaInterna vi = (VentanaInterna) (escritorio.getSelectedFrame());
         if (vi != null) {
-            this.imgFuente = vi.getLienzo2D().getImage();
+            ColorModel cm = vi.getLienzo2D().getImage().getColorModel();
+            WritableRaster raster = vi.getLienzo2D().getImage().copyData(null);
+            boolean alfaPre = vi.getLienzo2D().getImage().isAlphaPremultiplied();
+            imgFuente = new BufferedImage(cm, raster, alfaPre, null);
         }
     }//GEN-LAST:event_sliderTransformLinealFocusGained
 
@@ -1635,17 +1713,22 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     public LookupTable tablaOscurecerZonasClaras(int umbral) {
         byte[] lookupTable = new byte[256];
+
         for (int i = 0; i < 256; i++) {
             if (i < umbral) {
                 lookupTable[i] = (byte) i;
             } else {
-                lookupTable[i] = (byte) (255 - (255 - umbral) * (i - umbral) / (255 - umbral));
+                int valor = (int) (Math.pow((i - umbral), 2) / (double) umbral + umbral);
+                lookupTable[i] = (byte) Math.max(0, Math.min(255, valor));
             }
         }
 
         System.out.println("Lookup Table:");
         for (int i = 0; i < 256; i++) {
             System.out.print(lookupTable[i] + " ");
+            if ((i + 1) % 32 == 0) {
+                System.out.println("");
+            }
         }
         System.out.println();
 
@@ -2084,6 +2167,96 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.sliderTonoColor.setValue(0);
     }//GEN-LAST:event_sliderTonoColorFocusLost
 
+    private void menuAbrirSonidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAbrirSonidoActionPerformed
+        JFileChooser dlg = new JFileChooser();
+        int resp = dlg.showOpenDialog(this);
+        if (resp == JFileChooser.APPROVE_OPTION) {
+            try {
+                File selectedFile = dlg.getSelectedFile();
+                File f = new File(selectedFile.getAbsolutePath()) {
+                    @Override
+                    public String toString() {
+                        return this.getName();
+                    }
+                };
+                this.listaReproduccion.addItem(f);
+                this.listaReproduccion.setSelectedItem(f);
+            } catch (Exception ex) {
+                System.err.println("Error al leer sonido");
+            }
+        }
+    }//GEN-LAST:event_menuAbrirSonidoActionPerformed
+
+    private void buttonPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPlayActionPerformed
+        File f = (File) listaReproduccion.getSelectedItem();
+        if (f != null) {
+            player = new SMClipPlayer(f);
+            if (player != null) {
+                player.addLineListener(new ManejadorAudio());
+                player.play();
+            }
+        }
+    }//GEN-LAST:event_buttonPlayActionPerformed
+
+    private void buttonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStopActionPerformed
+        if (player != null) {
+            player.stop();
+            player = null;
+        }
+
+        if (recorder != null) {
+            recorder.stop();
+            recorder = null;
+        }
+    }//GEN-LAST:event_buttonStopActionPerformed
+
+    private void buttonGrabarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGrabarActionPerformed
+        JFileChooser dlg = new JFileChooser();
+        int resp = dlg.showOpenDialog(this);
+        if (resp == JFileChooser.APPROVE_OPTION) {
+            try {
+                File selectedFile = dlg.getSelectedFile();
+                recorder = new SMSoundRecorder(selectedFile);
+                if (recorder != null) {
+                    recorder.record();
+                }
+            } catch (Exception ex) {
+                System.err.println("Error al grabar sonido");
+            }
+        }
+    }//GEN-LAST:event_buttonGrabarActionPerformed
+
+    class ManejadorAudio implements LineListener {
+
+        @Override
+        public void update(LineEvent event) {
+            if (event.getType() == LineEvent.Type.START) {
+                buttonPlay.setEnabled(false);
+                buttonStop.setEnabled(true);
+                buttonGrabar.setEnabled(false);
+            }
+            if (event.getType() == LineEvent.Type.STOP) {
+                buttonPlay.setEnabled(true);
+                buttonStop.setEnabled(false);
+                buttonGrabar.setEnabled(true);
+            }
+            if (event.getType() == LineEvent.Type.CLOSE) {
+                // Desactivar botones porque la línea se ha cerrado
+                buttonPlay.setEnabled(true);
+                buttonStop.setEnabled(false);
+                buttonGrabar.setEnabled(true);
+
+                // Opcional: mostrar un mensaje al usuario
+                barraEstado.setText("La línea de audio se ha cerrado.");
+
+                if (player != null) {
+                    player.getClip().close();
+                    player = null;
+                }
+            }
+        }
+    }
+
     private BufferedImage getImageBand(BufferedImage img, int banda) {
         //Creamos el modelo de color de la nueva imagen basado en un espcio de color GRAY
         ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
@@ -2257,6 +2430,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonContraste;
     private javax.swing.JButton buttonDuplicar;
     private javax.swing.JButton buttonEcualizar;
+    private javax.swing.JButton buttonGrabar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton buttonGuardar;
@@ -2264,9 +2438,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton buttonNuevo;
     private javax.swing.JButton buttonOscurecer;
     private javax.swing.JButton buttonOscurecerZonasClaras;
+    private javax.swing.JButton buttonPlay;
     private javax.swing.JButton buttonRojo;
     private javax.swing.JButton buttonSepia;
     private javax.swing.JButton buttonShowBandas;
+    private javax.swing.JButton buttonStop;
     private javax.swing.JButton buttonTintar;
     private javax.swing.JButton buttonVolcado;
     private javax.swing.JDesktopPane escritorio;
@@ -2280,6 +2456,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator10;
+    private javax.swing.JToolBar.Separator jSeparator11;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -2291,7 +2469,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel labelPosterizar;
     private javax.swing.JLabel labelTransformLineal;
     private javax.swing.JLabel labelTransformacionLineal;
+    private javax.swing.JComboBox<File> listaReproduccion;
     private javax.swing.JMenuItem menuAbrir;
+    private javax.swing.JMenuItem menuAbrirSonido;
     private javax.swing.JMenuItem menuAffineTransform;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuItem menuBandCombineOp;
