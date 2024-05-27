@@ -42,6 +42,12 @@ public abstract class AbstractShape implements Shape {
         alisado = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
+    /**
+     *
+     * Devuelve el tipo de figura basado en la instancia de la clase.
+     *
+     * @return El tipo de figura como una cadena de texto.
+     */
     public String getTipoFigura() {
         if (this instanceof MiLinea) {
             return "Línea";

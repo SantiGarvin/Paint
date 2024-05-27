@@ -464,6 +464,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         listaReproduccion.setBackground(new java.awt.Color(242, 242, 242));
         listaReproduccion.setToolTipText("Lista de reproducción");
+        listaReproduccion.setPreferredSize(new java.awt.Dimension(200, 24));
         barraHerramientas.add(listaReproduccion);
         barraHerramientas.add(jSeparator11);
 
